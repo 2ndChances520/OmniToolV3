@@ -1,3 +1,5 @@
+code
+Markdown
 <div align="center">
 
 # `T E A M L E G A C Y // OMNITOOL V3`
@@ -13,8 +15,8 @@
       ▲ ▲
      ▲ ▲ ▲
     ███████
-
-
+WARNING: THIS REPOSITORY CONTAINS CLASSIFIED MATERIALS CAPABLE OF COVERT AUDIO SYNTHESIS, ZERO-FOOTPRINT TRANSCRIPTION, AND STEGANOGRAPHIC PAYLOAD ENCAPSULATION. UNAUTHORIZED ACCESS IS A VIOLATION OF DIRECTIVE 7-A.
+</div>
 👁️‍🗨️ BRIEFING: SYSTEM OVERVIEW
 TeamLegacy Omnitool V3 (Codename: Black Chamber) is a unified, zero-footprint tactical browser utility suite. Designed for field agents operating in high-surveillance environments, this tool deck executes 100% locally within the browser environment.
 No telemetry. No cloud APIs. Absolute OPSEC.
@@ -73,3 +75,6 @@ Note: Initial execution of AI modules requires an active network connection to c
 ⚠️ DIRECTORATE DISCLAIMER
 [REDACTED] TEAMLEGACY OPERATIVES ONLY.
 This tool is provided "as is" without warranty of any kind. The authors are not responsible for burned aliases, compromised safehouses, or intercepted intelligence resulting from the misuse of this Command Deck. Maintain strict OPSEC at all times. End of transmission.
+<div align="center">
+<code><< EOF_TRANSMISSION // 0x5A4B9 >></code>
+</div>
