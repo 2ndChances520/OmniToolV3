@@ -1,0 +1,2862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TeamLegacy Omnitool V3 // Black Chamber Command Deck</title>
+  <style>
+    :root{
+      --bg:#05070a;
+      --bg2:#0a1016;
+      --panel:#0d141d;
+      --panel2:#111b26;
+      --line:#1d3144;
+      --text:#d8ecff;
+      --muted:#8ea8bf;
+      --cyan:#73d7ff;
+      --cyan2:#36b8f2;
+      --green:#8cff9b;
+      --amber:#ffd36b;
+      --red:#ff7f7f;
+      --purple:#b98cff;
+      --white:#ffffff;
+      --radius:18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --shadow:0 0 0 1px rgba(115,215,255,.08), 0 10px 40px rgba(0,0,0,.45), inset 0 0 60px rgba(55,130,180,.04);
+      --glow:0 0 22px rgba(54,184,242,.22);
+    }
+
+    * { box-sizing:border-box; }
+    html, body{
+      margin:0;
+      min-height:100%;
+      background:
+        radial-gradient(circle at 20% 15%, rgba(54,184,242,.08), transparent 22%),
+        radial-gradient(circle at 80% 10%, rgba(140,255,155,.05), transparent 22%),
+        linear-gradient(180deg, #030508 0%, #081019 100%);
+      color:var(--text);
+      font-family:var(--sans);
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background-image:
+        linear-gradient(rgba(115,215,255,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(115,215,255,.04) 1px, transparent 1px);
+      background-size:32px 32px;
+      mask-image: radial-gradient(circle at center, rgba(255,255,255,.75), transparent 85%);
+      opacity:.7;
+    }
+
+    .app{ position:relative; z-index:1; max-width:1480px; margin:0 auto; padding:24px; }
+    .topbar{ display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; margin-bottom:22px; }
+    .brand{ display:flex; align-items:center; gap:16px; }
+    .seal{
+      width:68px;height:68px;border-radius:50%; display:grid;place-items:center;
+      border:1px solid rgba(115,215,255,.18);
+      background:linear-gradient(145deg, #0b121a, #111a25);
+      box-shadow:0 0 30px rgba(54,184,242,.12), inset 0 0 25px rgba(115,215,255,.06);
+      color:var(--cyan); font-size:26px; font-weight:900;
+    }
+    .brand h1{ margin:0; font-size:1.55rem; letter-spacing:.18em; text-transform:uppercase; }
+    .brand .sub{ margin-top:5px; color:var(--muted); font-size:.92rem; letter-spacing:.14em; text-transform:uppercase; font-family:var(--mono); }
+    .pill{
+      border:1px solid rgba(115,215,255,.15);
+      background: linear-gradient(180deg, rgba(16,29,42,.9), rgba(9,17,24,.9));
+      padding:10px 14px; border-radius:999px; color:var(--muted); font-family:var(--mono);
+      font-size:.82rem; letter-spacing:.06em; box-shadow: var(--shadow);
+    }
+    .pill strong{ color:var(--cyan); }
+
+    .banner{
+      margin-bottom:18px; border:1px solid rgba(255,211,107,.14);
+      background:linear-gradient(180deg, rgba(48,37,14,.35), rgba(32,22,8,.18));
+      color:#ffe3a0; padding:12px 14px; border-radius:14px; font-size:.92rem; line-height:1.5;
+    }
+
+    .modebar{
+      display:flex; flex-wrap:wrap; gap:12px; margin-bottom:22px;
+      background:rgba(7,13,19,.55); padding:10px; border-radius:18px;
+      border:1px solid rgba(115,215,255,.08);
+      box-shadow: inset 0 0 30px rgba(115,215,255,.03);
+    }
+
+    .mode-btn{
+      appearance:none; border:none; cursor:pointer; padding:12px 16px; border-radius:14px;
+      font-weight:800; letter-spacing:.08em; text-transform:uppercase;
+      background: linear-gradient(180deg, rgba(20,31,45,.96), rgba(12,19,27,.96));
+      color:var(--text); border:1px solid rgba(115,215,255,.14); transition:all .15s ease;
+    }
+    .mode-btn:hover{ transform:translateY(-1px); box-shadow:var(--glow); }
+    .mode-btn.active{ background: linear-gradient(180deg, rgba(77,213,255,.95), rgba(26,153,214,.95)); color:#031019; }
+
+    .layout{ display:grid; grid-template-columns:1.25fr .85fr; gap:22px; }
+
+    .panel{
+      background:linear-gradient(180deg, rgba(14,22,31,.92), rgba(8,13,19,.92));
+      border:1px solid rgba(115,215,255,.12); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden;
+      backdrop-filter: blur(8px);
+    }
+
+    .panel-header{
+      display:flex; justify-content:space-between; align-items:center; gap:14px;
+      padding:16px 18px; border-bottom:1px solid rgba(115,215,255,.08);
+      background: linear-gradient(180deg, rgba(17,28,40,.88), rgba(10,16,24,.88));
+    }
+    .panel-title{ font-size:.95rem; letter-spacing:.16em; text-transform:uppercase; font-weight:800; }
+    .panel-tag{ color:var(--muted); font-family:var(--mono); font-size:.76rem; letter-spacing:.08em; text-transform:uppercase; }
+    .panel-body{ padding:18px; }
+    .stack{ display:grid; gap:16px; }
+    .grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .grid-3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
+    .grid-4{ display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:14px; }
+    .hidden{ display:none !important; }
+
+    label{ display:block; font-size:.8rem; text-transform:uppercase; letter-spacing:.14em; color:var(--muted); margin-bottom:8px; font-weight:700; }
+
+    textarea, select, input{
+      width:100%; border:none; outline:none;
+      background: linear-gradient(180deg, rgba(11,19,27,.95), rgba(6,12,18,.95));
+      color:var(--text); border:1px solid rgba(115,215,255,.14); border-radius:14px; padding:14px; font-size:1rem;
+      transition:border-color .15s ease, box-shadow .15s ease, transform .12s ease;
+    }
+    textarea:focus, select:focus, input:focus{
+      border-color: rgba(115,215,255,.45);
+      box-shadow: 0 0 0 3px rgba(54,184,242,.12);
+    }
+    textarea{ min-height:220px; resize:vertical; line-height:1.55; }
+
+    input[type="color"]{
+      min-height:52px;
+      padding:6px;
+      cursor:pointer;
+      border-radius:14px;
+    }
+
+    button{
+      appearance:none; border:none; cursor:pointer; padding:13px 16px; border-radius:14px;
+      font-weight:800; letter-spacing:.08em; text-transform:uppercase; transition:transform .15s ease, opacity .15s ease, box-shadow .15s ease;
+    }
+    button:hover{ transform:translateY(-1px); box-shadow:var(--glow); }
+    button:disabled{ opacity:.5; cursor:not-allowed; transform:none; box-shadow:none; }
+
+    .btn-primary{ background: linear-gradient(180deg, rgba(77,213,255,.95), rgba(26,153,214,.95)); color:#031019; }
+    .btn-secondary{ background: linear-gradient(180deg, rgba(20,31,45,.96), rgba(12,19,27,.96)); color:var(--text); border:1px solid rgba(115,215,255,.14); }
+    .btn-danger{ background: linear-gradient(180deg, rgba(80,26,26,.95), rgba(54,14,14,.95)); color:#ffd3d3; border:1px solid rgba(255,127,127,.18); }
+    .btn-success{ background: linear-gradient(180deg, rgba(31,77,45,.95), rgba(18,49,28,.95)); color:#d8ffe0; border:1px solid rgba(140,255,155,.18); }
+    .btn-warning{ background: linear-gradient(180deg, rgba(86,66,18,.95), rgba(58,44,12,.95)); color:#ffeab7; border:1px solid rgba(255,211,107,.18); }
+
+    .btn-row{ display:flex; flex-wrap:wrap; gap:12px; }
+
+    .hud-card{
+      border:1px solid rgba(115,215,255,.11); border-radius:16px; padding:14px;
+      background: linear-gradient(180deg, rgba(13,22,30,.95), rgba(9,15,22,.95)); margin-bottom:14px;
+    }
+    .hud-title{ color:var(--muted); text-transform:uppercase; letter-spacing:.12em; font-size:.78rem; font-weight:800; margin-bottom:10px; }
+    .big-readout{ font-size:1.3rem; font-weight:800; color:var(--cyan); letter-spacing:.04em; word-break:break-word; font-family:var(--mono); }
+    .small{ font-size:.84rem; color:var(--muted); line-height:1.55; }
+    .tiny{ font-size:.76rem; color:var(--muted); line-height:1.45; }
+    .meter{ height:10px; width:100%; background:#07111a; border-radius:999px; border:1px solid rgba(115,215,255,.08); overflow:hidden; }
+    .meter > span{ display:block; height:100%; width:0%; background: linear-gradient(90deg, rgba(54,184,242,.8), rgba(140,255,155,.8)); transition:width .2s ease; }
+    .log{ min-height:220px; max-height:420px; overflow:auto; border-radius:14px; background:#050a10; border:1px solid rgba(115,215,255,.1); padding:12px; font-family:var(--mono); font-size:.84rem; line-height:1.5; color:#a8c6db; }
+    .ok{ color:var(--green); } .warn{ color:var(--amber); } .err{ color:var(--red); } .accent{ color:var(--cyan); }
+
+    .live-dot{ width:12px; height:12px; border-radius:50%; display:inline-block; margin-right:8px; background:#355160; box-shadow:0 0 0 1px rgba(115,215,255,.15); vertical-align:middle; }
+    .live-dot.active{ background:var(--red); box-shadow:0 0 14px rgba(255,127,127,.55); animation:pulse 1s infinite; }
+    @keyframes pulse{ 0%{ transform:scale(1); opacity:1; } 50%{ transform:scale(1.18); opacity:.8; } 100%{ transform:scale(1); opacity:1; } }
+
+    audio, video{
+      width:100%;
+      margin-top:8px;
+      border-radius:14px;
+      background:#000;
+      border:1px solid rgba(115,215,255,.12);
+    }
+
+    .capsule-view{
+      min-height:280px; border-radius:18px; border:1px dashed rgba(91,208,255,.28); background:rgba(1,4,10,.45); padding:18px; display:flex; flex-direction:column; justify-content:center; gap:12px;
+    }
+    .capsule-title{ font-size:1rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--cyan); }
+    .locked-card,.unlocked-card{ padding:16px; border-radius:18px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); }
+    .countdown{ font-size:1.35rem; font-weight:800; color:var(--green); letter-spacing:.04em; }
+    .revealed-message{ white-space:pre-wrap; line-height:1.6; color:var(--text); word-break:break-word; margin-top:10px; }
+
+    #qrCanvas, #scanCanvas {
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      max-width:100%;
+      height:auto;
+      border-radius:18px;
+      background:#fff;
+      padding:14px;
+      border:1px solid rgba(115,215,255,.12);
+    }
+
+    .qr-preview-shell{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:16px;
+      align-items:start;
+    }
+
+    .preview-frame{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      min-height:420px;
+      background:linear-gradient(180deg, rgba(6,12,18,.85), rgba(10,18,26,.85));
+      border:1px solid rgba(115,215,255,.08);
+      border-radius:18px;
+      padding:16px;
+    }
+
+    .scan-result{
+      min-height:120px;
+      white-space:pre-wrap;
+      word-break:break-word;
+      line-height:1.6;
+      font-family:var(--mono);
+      font-size:.92rem;
+      color:var(--cyan);
+    }
+
+    .stat-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid rgba(115,215,255,.14);
+      background:rgba(8,16,24,.8);
+      color:var(--muted);
+      font-size:.8rem;
+      font-family:var(--mono);
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
+
+    .inline-note{
+      border-left:3px solid rgba(115,215,255,.32);
+      padding:10px 12px;
+      border-radius:10px;
+      background:rgba(115,215,255,.05);
+      color:var(--muted);
+      font-size:.9rem;
+      line-height:1.55;
+    }
+
+    /* ---- BASE64 VAULT ---- */
+    .b64-tab-bar{
+      display:flex;
+      gap:10px;
+      margin-bottom:18px;
+    }
+    .b64-tab{
+      appearance:none; border:none; cursor:pointer;
+      padding:10px 18px; border-radius:12px;
+      font-weight:800; letter-spacing:.08em; text-transform:uppercase; font-size:.85rem;
+      background: linear-gradient(180deg, rgba(20,31,45,.96), rgba(12,19,27,.96));
+      color:var(--muted); border:1px solid rgba(115,215,255,.14); transition:all .15s ease;
+    }
+    .b64-tab.active{
+      background: linear-gradient(180deg, rgba(185,140,255,.25), rgba(130,70,230,.18));
+      color:var(--purple); border-color:rgba(185,140,255,.3);
+    }
+    .b64-tab-panel{ display:none; }
+    .b64-tab-panel.active{ display:grid; gap:16px; }
+
+    .b64-file-drop{
+      border:2px dashed rgba(185,140,255,.28);
+      border-radius:16px;
+      background:rgba(185,140,255,.04);
+      padding:28px 18px;
+      text-align:center;
+      cursor:pointer;
+      transition:border-color .15s ease, background .15s ease;
+      position:relative;
+    }
+    .b64-file-drop:hover, .b64-file-drop.drag-over{
+      border-color:rgba(185,140,255,.65);
+      background:rgba(185,140,255,.09);
+    }
+    .b64-file-drop input[type="file"]{
+      position:absolute;
+      inset:0;
+      opacity:0;
+      cursor:pointer;
+      width:100%;
+      height:100%;
+      border-radius:16px;
+    }
+    .b64-drop-icon{ font-size:2rem; margin-bottom:10px; color:var(--purple); }
+    .b64-drop-label{ color:var(--muted); font-size:.9rem; letter-spacing:.06em; text-transform:uppercase; font-weight:700; }
+    .b64-drop-sub{ color:rgba(115,215,255,.4); font-size:.78rem; margin-top:6px; font-family:var(--mono); }
+
+    .b64-file-cards{ display:grid; gap:12px; }
+    .b64-file-card{
+      border:1px solid rgba(185,140,255,.18);
+      border-radius:14px;
+      background:linear-gradient(180deg, rgba(14,10,28,.95), rgba(9,7,18,.95));
+      padding:14px;
+    }
+    .b64-file-card-header{
+      display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:10px;
+    }
+    .b64-file-name{ font-weight:700; font-size:.9rem; color:var(--purple); word-break:break-all; }
+    .b64-file-meta{ font-size:.76rem; color:var(--muted); font-family:var(--mono); margin-top:2px; }
+    .b64-file-actions{ display:flex; gap:8px; flex-wrap:wrap; flex-shrink:0; }
+    .b64-output-box{
+      background:#050a10;
+      border:1px solid rgba(185,140,255,.12);
+      border-radius:10px;
+      padding:12px;
+      font-family:var(--mono);
+      font-size:.78rem;
+      color:#b898ff;
+      max-height:140px;
+      overflow:auto;
+      word-break:break-all;
+      line-height:1.5;
+      user-select:all;
+    }
+    .b64-output-box.text-mode{ color:var(--cyan); font-size:.82rem; }
+    .b64-toggle-row{ display:flex; gap:10px; align-items:center; margin-bottom:8px; }
+    .b64-toggle-label{ font-size:.76rem; color:var(--muted); text-transform:uppercase; letter-spacing:.1em; font-weight:700; }
+    .b64-switch{
+      display:flex; gap:6px;
+    }
+    .b64-switch button{
+      padding:6px 12px;
+      font-size:.72rem;
+      border-radius:8px;
+      background:rgba(11,19,27,.95);
+      color:var(--muted);
+      border:1px solid rgba(115,215,255,.12);
+    }
+    .b64-switch button.on{
+      background:rgba(185,140,255,.2);
+      color:var(--purple);
+      border-color:rgba(185,140,255,.35);
+    }
+
+    .b64-decode-preview{
+      border:1px solid rgba(115,215,255,.1);
+      border-radius:14px;
+      overflow:hidden;
+      background:#050a10;
+      margin-top:10px;
+    }
+    .b64-decode-preview img,
+    .b64-decode-preview video,
+    .b64-decode-preview audio{
+      display:block;
+      max-width:100%;
+      width:100%;
+      border-radius:0;
+      border:none;
+      margin:0;
+    }
+
+    .b64-stats-bar{
+      display:flex; gap:14px; flex-wrap:wrap; align-items:center;
+    }
+    .b64-stat{
+      padding:6px 12px; border-radius:999px;
+      background:rgba(11,19,27,.9);
+      border:1px solid rgba(115,215,255,.1);
+      font-family:var(--mono); font-size:.76rem;
+      color:var(--muted);
+    }
+    .b64-stat strong{ color:var(--cyan); }
+
+    @media (max-width: 1180px){
+      .layout{ grid-template-columns:1fr; }
+      .qr-preview-shell{ grid-template-columns:1fr; }
+    }
+
+    @media (max-width: 780px){
+      .grid-2,.grid-3,.grid-4,.stat-grid{ grid-template-columns:1fr; }
+      .brand h1{ font-size:1.25rem; }
+      .brand .sub{ font-size:.82rem; }
+      .preview-frame{ min-height:300px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div class="brand">
+        <div class="seal">▲</div>
+        <div>
+          <h1>TeamLegacy Omnitool V3</h1>
+          <div class="sub">Black Chamber Command Deck // Voice • Cipher • Capsule • QR • Base64 • Ascii85</div>
+        </div>
+      </div>
+      <div class="pill">SYSTEM: <strong id="topStatus">STANDBY</strong></div>
+    </div>
+
+    <div class="banner">
+      TeamLegacy Omnitool V3 unifies local browser utility systems into a single command deck. AI modules load only when called. New: <strong>Base64 Vault</strong> &amp; <strong>Ascii85 Vault</strong> — encode/decode text and files of any type, fully offline. For best camera / microphone / model behavior, run from <strong>localhost</strong> instead of <strong>file://</strong>.
+    </div>
+
+    <div class="modebar">
+      <button class="mode-btn active" data-mode="tts">Voice Synth</button>
+      <button class="mode-btn" data-mode="transcribe">Transcription</button>
+      <button class="mode-btn" data-mode="steg">Steganography</button>
+      <button class="mode-btn" data-mode="capsule">Time Capsule</button>
+      <button class="mode-btn" data-mode="qr">QR Suite V2</button>
+      <button class="mode-btn" data-mode="b64">Base64 Vault</button>
+      <button class="mode-btn" data-mode="a85">Ascii85 Vault</button>
+    </div>
+
+    <div class="layout">
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title" id="mainTitle">Voice Synthesis Console</div>
+            <div class="panel-tag" id="mainTag">Browser-local Kokoro speech synthesis</div>
+          </div>
+          <div class="panel-tag">
+            <span id="liveDot" class="live-dot"></span>
+            <span id="liveLabel">IDLE</span>
+          </div>
+        </div>
+
+        <div class="panel-body">
+
+          <!-- TTS -->
+          <div id="mode-tts" class="mode-panel stack">
+            <div>
+              <label for="ttsInput">Text Payload</label>
+              <textarea id="ttsInput">TeamLegacy operations are now online. Voice synthesis is active.</textarea>
+            </div>
+            <div class="grid-2">
+              <div>
+                <label for="voiceSelect">Voice Profile</label>
+                <select id="voiceSelect">
+                  <option value="af_bella">AF_BELLA</option>
+                  <option value="af_heart">AF_HEART</option>
+                  <option value="af_sarah">AF_SARAH</option>
+                  <option value="am_adam">AM_ADAM</option>
+                  <option value="am_michael">AM_MICHAEL</option>
+                  <option value="bf_emma">BF_EMMA</option>
+                  <option value="bm_george">BM_GEORGE</option>
+                </select>
+              </div>
+              <div>
+                <label for="dtypeSelect">Model Precision</label>
+                <select id="dtypeSelect">
+                  <option value="q8" selected>q8</option>
+                  <option value="fp16">fp16</option>
+                  <option value="fp32">fp32</option>
+                  <option value="q4">q4</option>
+                  <option value="q4f16">q4f16</option>
+                </select>
+              </div>
+            </div>
+            <div class="btn-row">
+              <button class="btn-secondary" id="ttsInit">Initialize Engine</button>
+              <button class="btn-primary" id="ttsSpeak">Generate Speech</button>
+              <button class="btn-secondary" id="ttsPlay">Play</button>
+              <button class="btn-secondary" id="ttsDownload">Download WAV</button>
+              <button class="btn-danger" id="ttsStop">Stop</button>
+            </div>
+            <div>
+              <label>Playback Monitor</label>
+              <audio id="ttsAudio" controls></audio>
+            </div>
+          </div>
+
+          <!-- ASR -->
+          <div id="mode-transcribe" class="mode-panel stack hidden">
+            <div class="grid-2">
+              <div>
+                <label for="asrModel">Model</label>
+                <select id="asrModel">
+                  <option value="Xenova/whisper-tiny.en" selected>Whisper Tiny English</option>
+                  <option value="onnx-community/whisper-tiny.en">ONNX Whisper Tiny English</option>
+                  <option value="Xenova/whisper-base.en">Whisper Base English</option>
+                </select>
+              </div>
+              <div>
+                <label for="asrDevice">Acceleration</label>
+                <select id="asrDevice">
+                  <option value="webgpu">WebGPU</option>
+                  <option value="wasm" selected>WASM</option>
+                </select>
+              </div>
+            </div>
+            <div class="btn-row">
+              <button class="btn-secondary" id="asrInit">Load Model</button>
+              <button class="btn-primary" id="asrRecord">Start Recording</button>
+              <button class="btn-danger" id="asrStop">Stop Recording</button>
+              <button class="btn-success" id="asrTranscribe">Transcribe Audio</button>
+              <button class="btn-secondary" id="asrCopy">Copy Text</button>
+              <button class="btn-secondary" id="asrDownload">Download TXT</button>
+              <button class="btn-secondary" id="asrClear">Clear</button>
+            </div>
+            <div>
+              <label>Recorded Audio</label>
+              <audio id="asrAudio" controls></audio>
+            </div>
+            <div>
+              <label for="asrFile">Fallback Audio Upload</label>
+              <input id="asrFile" type="file" accept="audio/*" />
+              <div class="small" style="margin-top:8px;">If the browser blocks microphone access, upload a WAV, MP3, M4A, OGG, or WebM file instead.</div>
+            </div>
+            <div>
+              <label for="asrOutput">Transcript Output</label>
+              <textarea id="asrOutput" placeholder="Transcript output will appear here..."></textarea>
+            </div>
+          </div>
+
+          <!-- STEG -->
+          <div id="mode-steg" class="mode-panel stack hidden">
+            <div class="grid-2">
+              <div>
+                <label for="publicMessage">Public Message</label>
+                <textarea id="publicMessage" placeholder="The visible message everyone will see."></textarea>
+              </div>
+              <div>
+                <label for="secretMessage">Secret Message</label>
+                <textarea id="secretMessage" placeholder="The hidden message to embed using zero-width characters."></textarea>
+              </div>
+            </div>
+            <div class="btn-row">
+              <button class="btn-primary" id="stegEncode">Hide Message</button>
+              <button class="btn-secondary" id="stegCopy">Copy Encoded</button>
+              <button class="btn-secondary" id="stegClear">Clear</button>
+            </div>
+            <div>
+              <label for="encodeResult">Encoded Output</label>
+              <textarea id="encodeResult" readonly placeholder="Steganographic output will appear here..."></textarea>
+            </div>
+            <div>
+              <label for="hiddenInput">Decode Input</label>
+              <textarea id="hiddenInput" placeholder="Paste encoded text here to reveal hidden content..."></textarea>
+            </div>
+            <div class="btn-row">
+              <button class="btn-success" id="stegDecode">Reveal Message</button>
+            </div>
+            <div>
+              <label for="decodeResult">Hidden Secret</label>
+              <textarea id="decodeResult" readonly placeholder="Decoded secret will appear here..."></textarea>
+            </div>
+          </div>
+
+          <!-- CAPSULE -->
+          <div id="mode-capsule" class="mode-panel stack hidden">
+            <div class="grid-2">
+              <div>
+                <label for="capsuleTitle">Capsule Name</label>
+                <input id="capsuleTitle" type="text" placeholder="Example: Message to Future Me" maxlength="120" />
+              </div>
+              <div>
+                <label for="unlockTime">Unlock Date & Time</label>
+                <input id="unlockTime" type="datetime-local" />
+              </div>
+            </div>
+            <div>
+              <label for="capsuleMessage">Capsule Message</label>
+              <textarea id="capsuleMessage" placeholder="Write your message for the future here..."></textarea>
+            </div>
+            <div class="btn-row">
+              <button class="btn-primary" id="capsuleSave">Save Time Capsule</button>
+              <button class="btn-secondary" id="capsulePreviewBtn">Load Preview</button>
+            </div>
+            <div class="capsule-view" id="capsulePreview">
+              <div class="capsule-title">Awaiting Capsule Data</div>
+              <div class="locked-card">Enter a message and future unlock time, then select <strong>Load Preview</strong> or save the capsule file.</div>
+            </div>
+          </div>
+
+          <!-- QR SUITE V2 -->
+          <div id="mode-qr" class="mode-panel stack hidden">
+            <div class="grid-2">
+              <div>
+                <label for="qrType">QR Content Type</label>
+                <select id="qrType">
+                  <option value="url" selected>Website URL</option>
+                  <option value="text">Plain Text</option>
+                  <option value="email">Email</option>
+                  <option value="phone">Phone Number</option>
+                  <option value="sms">SMS Message</option>
+                  <option value="wifi">Wi-Fi Login</option>
+                  <option value="vcard">vCard Contact</option>
+                </select>
+              </div>
+              <div>
+                <label for="qrSize">QR Size</label>
+                <select id="qrSize">
+                  <option value="256">256 x 256</option>
+                  <option value="384" selected>384 x 384</option>
+                  <option value="512">512 x 512</option>
+                  <option value="768">768 x 768</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="qr-basic-fields" class="stack">
+              <div>
+                <label for="qrPrimary">Primary Content</label>
+                <textarea id="qrPrimary" placeholder="Enter website URL, text, email address, phone number, or message..."></textarea>
+              </div>
+              <div id="qrSecondaryWrap" class="hidden">
+                <label for="qrSecondary">Secondary Field</label>
+                <input id="qrSecondary" type="text" placeholder="Used for SMS number or other structured types" />
+              </div>
+            </div>
+
+            <div id="qr-wifi-fields" class="stack hidden">
+              <div class="grid-2">
+                <div>
+                  <label for="wifiSSID">Wi-Fi Name (SSID)</label>
+                  <input id="wifiSSID" type="text" placeholder="Example: TeamLegacyNet" />
+                </div>
+                <div>
+                  <label for="wifiPassword">Wi-Fi Password</label>
+                  <input id="wifiPassword" type="text" placeholder="Enter Wi-Fi password" />
+                </div>
+              </div>
+              <div class="grid-2">
+                <div>
+                  <label for="wifiEncryption">Encryption</label>
+                  <select id="wifiEncryption">
+                    <option value="WPA" selected>WPA / WPA2</option>
+                    <option value="WEP">WEP</option>
+                    <option value="nopass">Open Network</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="wifiHidden">Hidden Network</label>
+                  <select id="wifiHidden">
+                    <option value="false" selected>No</option>
+                    <option value="true">Yes</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div id="qr-vcard-fields" class="stack hidden">
+              <div class="grid-2">
+                <div>
+                  <label for="vcardFirst">First Name</label>
+                  <input id="vcardFirst" type="text" placeholder="Tony" />
+                </div>
+                <div>
+                  <label for="vcardLast">Last Name</label>
+                  <input id="vcardLast" type="text" placeholder="Stark" />
+                </div>
+              </div>
+              <div class="grid-2">
+                <div>
+                  <label for="vcardPhone">Phone</label>
+                  <input id="vcardPhone" type="text" placeholder="417-555-1234" />
+                </div>
+                <div>
+                  <label for="vcardEmail">Email</label>
+                  <input id="vcardEmail" type="email" placeholder="tony@starkindustries.com" />
+                </div>
+              </div>
+              <div>
+                <label for="vcardOrg">Organization</label>
+                <input id="vcardOrg" type="text" placeholder="TeamLegacy" />
+              </div>
+              <div>
+                <label for="vcardTitle">Job Title</label>
+                <input id="vcardTitle" type="text" placeholder="Engineer" />
+              </div>
+              <div>
+                <label for="vcardUrl">Website</label>
+                <input id="vcardUrl" type="url" placeholder="https://example.com" />
+              </div>
+            </div>
+
+            <!-- QR STYLE CONTROLS -->
+            <div class="hud-card">
+              <div class="hud-title">QR Styling Controls</div>
+              <div class="grid-2">
+                <div>
+                  <label for="qrFg">Foreground Color</label>
+                  <input id="qrFg" type="color" value="#000000" />
+                </div>
+                <div>
+                  <label for="qrBg">Background Color</label>
+                  <input id="qrBg" type="color" value="#ffffff" />
+                </div>
+              </div>
+              <div class="grid-2" style="margin-top:14px;">
+                <div>
+                  <label for="qrLabel">Center Label (Optional)</label>
+                  <input id="qrLabel" type="text" maxlength="18" placeholder="TEAMLEGACY" />
+                </div>
+                <div>
+                  <label for="qrErrorCorrection">Error Correction</label>
+                  <select id="qrErrorCorrection">
+                    <option value="L">Low</option>
+                    <option value="M" selected>Medium</option>
+                    <option value="Q">Quartile</option>
+                    <option value="H">High (Best for label)</option>
+                  </select>
+                </div>
+              </div>
+              <div class="inline-note" style="margin-top:14px;">
+                If using a center label, set correction to <strong>High</strong> for better scan reliability.
+              </div>
+            </div>
+
+            <div class="btn-row">
+              <button class="btn-primary" id="qrGenerate">Generate QR</button>
+              <button class="btn-secondary" id="qrDownload">Download PNG</button>
+              <button class="btn-secondary" id="qrDownloadSVG">Download SVG</button>
+              <button class="btn-secondary" id="qrPrintCard">Print QR Card</button>
+              <button class="btn-secondary" id="qrCopyData">Copy QR Data</button>
+              <button class="btn-danger" id="qrClear">Clear</button>
+            </div>
+
+            <div class="hud-card">
+              <div class="hud-title">QR Payload</div>
+              <textarea id="qrPayload" readonly placeholder="Structured QR content will appear here..."></textarea>
+            </div>
+
+            <div class="qr-preview-shell">
+              <div class="hud-card">
+                <div class="hud-title">QR Preview</div>
+                <div class="preview-frame">
+                  <canvas id="qrCanvas" width="384" height="384"></canvas>
+                </div>
+                <div class="small" style="margin-top:10px;">Local render pipeline ready for PNG, SVG, and print export.</div>
+              </div>
+
+              <div class="stack">
+                <div class="hud-card">
+                  <div class="hud-title">QR Scanner / Decoder</div>
+                  <div class="btn-row">
+                    <button class="btn-success" id="qrStartCam">Start Webcam Scan</button>
+                    <button class="btn-danger" id="qrStopCam">Stop Webcam</button>
+                  </div>
+                  <div style="margin-top:12px;">
+                    <label for="qrImageUpload">Upload QR Image</label>
+                    <input id="qrImageUpload" type="file" accept="image/*" />
+                  </div>
+                  <div class="small" style="margin-top:10px;">Decode QR codes from your camera or uploaded image.</div>
+                </div>
+
+                <div class="hud-card">
+                  <div class="hud-title">Live Scanner Feed</div>
+                  <video id="qrVideo" playsinline muted class="hidden"></video>
+                  <canvas id="scanCanvas" width="640" height="480"></canvas>
+                  <div class="small" style="margin-top:10px;">Webcam feed is analyzed locally in-browser.</div>
+                </div>
+
+                <div class="hud-card">
+                  <div class="hud-title">Decoded Scan Output</div>
+                  <div id="qrScanResult" class="scan-result">Awaiting QR scan input...</div>
+                  <div class="btn-row" style="margin-top:12px;">
+                    <button class="btn-secondary" id="qrCopyScan">Copy Scan Result</button>
+                    <button class="btn-secondary" id="qrUseScan">Use as Generator Input</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ============================
+               BASE64 VAULT MODULE
+               ============================ -->
+          <div id="mode-b64" class="mode-panel hidden">
+
+            <div class="b64-tab-bar">
+              <button class="b64-tab active" id="b64TabEncode" onclick="b64SwitchTab('encode')">&#x2191; Encode</button>
+              <button class="b64-tab" id="b64TabDecode" onclick="b64SwitchTab('decode')">&#x2193; Decode</button>
+            </div>
+
+            <!-- ENCODE PANEL -->
+            <div class="b64-tab-panel active" id="b64PanelEncode">
+
+              <!-- TEXT ENCODE -->
+              <div class="hud-card">
+                <div class="hud-title">Text → Base64</div>
+                <div>
+                  <label for="b64TextIn">Input Text</label>
+                  <textarea id="b64TextIn" placeholder="Type or paste any text to encode to Base64..." style="min-height:120px;"></textarea>
+                </div>
+                <div class="btn-row" style="margin-top:12px;">
+                  <button class="btn-primary" onclick="b64EncodeText()">Encode Text</button>
+                  <button class="btn-secondary" onclick="b64CopyOutput('b64TextOut')">Copy Output</button>
+                  <button class="btn-secondary" onclick="b64DownloadText('b64TextOut','encoded.b64.txt')">Download .txt</button>
+                  <button class="btn-danger" onclick="b64ClearText()">Clear</button>
+                </div>
+                <div style="margin-top:14px;">
+                  <div class="b64-toggle-row">
+                    <span class="b64-toggle-label">Charset</span>
+                    <div class="b64-switch">
+                      <button id="b64CharStd" class="on" onclick="b64SetCharset('std')">Standard</button>
+                      <button id="b64CharUrl" onclick="b64SetCharset('url')">URL-Safe</button>
+                    </div>
+                    <span class="b64-toggle-label" style="margin-left:14px;">Output</span>
+                    <div class="b64-switch">
+                      <button id="b64WrapOn" class="on" onclick="b64SetWrap(true)">Wrap 76</button>
+                      <button id="b64WrapOff" onclick="b64SetWrap(false)">No Wrap</button>
+                    </div>
+                  </div>
+                  <div class="b64-output-box" id="b64TextOut">Base64 output will appear here…</div>
+                  <div class="b64-stats-bar" style="margin-top:10px;" id="b64TextStats"></div>
+                </div>
+              </div>
+
+              <!-- FILE ENCODE -->
+              <div class="hud-card">
+                <div class="hud-title">Files → Base64 &nbsp;<span style="color:var(--purple);font-size:.76rem;">(any file type, multiple supported)</span></div>
+
+                <div class="b64-file-drop" id="b64DropZone">
+                  <input type="file" id="b64FileInput" multiple onchange="b64HandleFiles(this.files)" />
+                  <div class="b64-drop-icon">📁</div>
+                  <div class="b64-drop-label">Drop files here or click to browse</div>
+                  <div class="b64-drop-sub">Images · Documents · Audio · Video · Archives · Any binary</div>
+                </div>
+
+                <div class="btn-row" style="margin-top:14px;">
+                  <button class="btn-primary" onclick="b64EncodeSelectedFiles()">Encode All Files</button>
+                  <button class="btn-secondary" onclick="b64DownloadAllAsZipTxt()">Download All as .txt</button>
+                  <button class="btn-danger" onclick="b64ClearFiles()">Clear Files</button>
+                </div>
+
+                <div class="b64-toggle-row" style="margin-top:14px;">
+                  <span class="b64-toggle-label">Output Format</span>
+                  <div class="b64-switch">
+                    <button id="b64FmtRaw" onclick="b64SetFileFmt('raw')">Raw Base64</button>
+                    <button id="b64FmtUri" class="on" onclick="b64SetFileFmt('uri')">Data URI</button>
+                  </div>
+                </div>
+
+                <div class="b64-file-cards" id="b64FileCards" style="margin-top:12px;"></div>
+              </div>
+            </div>
+
+            <!-- DECODE PANEL -->
+            <div class="b64-tab-panel" id="b64PanelDecode">
+
+              <!-- TEXT DECODE -->
+              <div class="hud-card">
+                <div class="hud-title">Base64 → Text / File</div>
+                <div>
+                  <label for="b64DecodeIn">Base64 Input</label>
+                  <textarea id="b64DecodeIn" placeholder="Paste Base64 or a data URI (data:mime;base64,...) here..." style="min-height:150px; font-family:var(--mono); font-size:.82rem;"></textarea>
+                </div>
+
+                <div class="grid-2" style="margin-top:14px;">
+                  <div>
+                    <label for="b64DecodeMime">Output MIME Type (for file download)</label>
+                    <select id="b64DecodeMime">
+                      <option value="auto">Auto-Detect from Data URI</option>
+                      <option value="text/plain">text/plain</option>
+                      <option value="text/html">text/html</option>
+                      <option value="text/csv">text/csv</option>
+                      <option value="application/json">application/json</option>
+                      <option value="application/pdf">application/pdf</option>
+                      <option value="application/zip">application/zip</option>
+                      <option value="image/png">image/png</option>
+                      <option value="image/jpeg">image/jpeg</option>
+                      <option value="image/gif">image/gif</option>
+                      <option value="image/webp">image/webp</option>
+                      <option value="image/svg+xml">image/svg+xml</option>
+                      <option value="audio/mpeg">audio/mpeg (MP3)</option>
+                      <option value="audio/wav">audio/wav</option>
+                      <option value="audio/ogg">audio/ogg</option>
+                      <option value="video/mp4">video/mp4</option>
+                      <option value="video/webm">video/webm</option>
+                      <option value="application/octet-stream">application/octet-stream (binary)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label for="b64DecodeFilename">Download Filename</label>
+                    <input id="b64DecodeFilename" type="text" placeholder="decoded-output.bin" />
+                  </div>
+                </div>
+
+                <div class="btn-row" style="margin-top:14px;">
+                  <button class="btn-primary" onclick="b64DecodeToText()">Decode → Text</button>
+                  <button class="btn-success" onclick="b64DecodeToFile()">Decode → Download File</button>
+                  <button class="btn-warning" onclick="b64DecodePreview()">Preview Media</button>
+                  <button class="btn-secondary" onclick="b64CopyOutput('b64DecodeOut')">Copy Output</button>
+                  <button class="btn-danger" onclick="b64ClearDecode()">Clear</button>
+                </div>
+
+                <div style="margin-top:14px;">
+                  <div class="b64-output-box text-mode" id="b64DecodeOut" style="min-height:100px; max-height:260px;">Decoded text output will appear here…</div>
+                  <div class="b64-stats-bar" style="margin-top:10px;" id="b64DecodeStats"></div>
+                </div>
+
+                <div id="b64DecodePreviewContainer" class="b64-decode-preview hidden" style="margin-top:14px;"></div>
+              </div>
+
+              <!-- ROUNDTRIP VALIDATOR -->
+              <div class="hud-card">
+                <div class="hud-title">Roundtrip Validator</div>
+                <div class="small" style="margin-bottom:12px;">Encode then immediately decode a string to verify integrity. Great for testing custom Base64 payloads.</div>
+                <div>
+                  <label for="b64RtInput">Test String</label>
+                  <input id="b64RtInput" type="text" placeholder="Enter any text to roundtrip…" />
+                </div>
+                <div class="btn-row" style="margin-top:12px;">
+                  <button class="btn-primary" onclick="b64Roundtrip()">Run Roundtrip Test</button>
+                </div>
+                <div class="b64-output-box" id="b64RtOutput" style="margin-top:12px; min-height:60px;">Roundtrip result will appear here…</div>
+              </div>
+            </div>
+
+          </div>
+          <!-- END BASE64 VAULT -->
+
+          <!-- ============================
+               ASCII85 VAULT MODULE
+               ============================ -->
+          <div id="mode-a85" class="mode-panel stack hidden">
+            
+            <!-- ENCODE -->
+            <div class="hud-card">
+              <div class="hud-title">Text → Ascii85 (Base85)</div>
+              <div>
+                <label for="a85EncodeIn">Input Text</label>
+                <textarea id="a85EncodeIn" placeholder="Type or paste any text to encode to Ascii85..."></textarea>
+              </div>
+              <div class="btn-row" style="margin-top:12px;">
+                <button class="btn-primary" id="btnA85Encode">Encode Text</button>
+                <button class="btn-secondary" onclick="copyText('a85EncodeOut')">Copy Output</button>
+                <button class="btn-danger" onclick="$('a85EncodeIn').value='';$('a85EncodeOut').value='';">Clear</button>
+              </div>
+              <div style="margin-top:14px;">
+                <label for="a85EncodeOut">Ascii85 Output</label>
+                <textarea id="a85EncodeOut" readonly placeholder="Encoded Ascii85 payload will appear here..."></textarea>
+              </div>
+            </div>
+
+            <!-- DECODE -->
+            <div class="hud-card">
+              <div class="hud-title">Ascii85 (Base85) → Text</div>
+              <div>
+                <label for="a85DecodeIn">Ascii85 Input</label>
+                <textarea id="a85DecodeIn" placeholder="Paste Ascii85 encoded data here (with or without <~ ~> tags)..."></textarea>
+              </div>
+              <div class="btn-row" style="margin-top:12px;">
+                <button class="btn-success" id="btnA85Decode">Decode Text</button>
+                <button class="btn-secondary" onclick="copyText('a85DecodeOut')">Copy Output</button>
+                <button class="btn-danger" onclick="$('a85DecodeIn').value='';$('a85DecodeOut').value='';">Clear</button>
+              </div>
+              <div style="margin-top:14px;">
+                <label for="a85DecodeOut">Decoded Text</label>
+                <textarea id="a85DecodeOut" readonly placeholder="Decoded plain text will appear here..."></textarea>
+              </div>
+            </div>
+
+          </div>
+          <!-- END ASCII85 VAULT -->
+
+        </div>
+      </section>
+
+      <aside>
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Operations Telemetry</div>
+              <div class="panel-tag">Unified mission diagnostics</div>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="hud-card">
+              <div class="hud-title">Engine State</div>
+              <div class="big-readout" id="engineState">UNINITIALIZED</div>
+            </div>
+
+            <div class="hud-card">
+              <div class="hud-title">Load / Task Progress</div>
+              <div class="meter"><span id="progressBar"></span></div>
+              <div class="small" style="margin-top:8px;">Progress: <span id="progressText">0%</span></div>
+            </div>
+
+            <div class="hud-card">
+              <div class="hud-title">Runtime Notes</div>
+              <div class="small" id="runtimeNotes">Awaiting module selection.</div>
+            </div>
+
+            <div class="hud-card">
+              <div class="hud-title">Mission Statistics</div>
+              <div class="stat-grid">
+                <div class="badge">Mode <strong id="statMode">TTS</strong></div>
+                <div class="badge">Events <strong id="statEvents">0</strong></div>
+                <div class="badge">Exports <strong id="statExports">0</strong></div>
+                <div class="badge">Scans <strong id="statScans">0</strong></div>
+              </div>
+            </div>
+
+            <div class="hud-card">
+              <div class="hud-title">Mission Log</div>
+              <div class="log" id="logBox"></div>
+            </div>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </div>
+
+  <!-- QR libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
+
+  <script type="module">
+    const $ = (id) => document.getElementById(id);
+
+    const els = {
+      topStatus: $('topStatus'),
+      liveDot: $('liveDot'),
+      liveLabel: $('liveLabel'),
+      mainTitle: $('mainTitle'),
+      mainTag: $('mainTag'),
+      engineState: $('engineState'),
+      progressBar: $('progressBar'),
+      progressText: $('progressText'),
+      runtimeNotes: $('runtimeNotes'),
+      logBox: $('logBox'),
+      modeBtns: [...document.querySelectorAll('.mode-btn')],
+      modePanels: [...document.querySelectorAll('.mode-panel')],
+      statMode: $('statMode'),
+      statEvents: $('statEvents'),
+      statExports: $('statExports'),
+      statScans: $('statScans'),
+    };
+
+    const state = {
+      mode: 'tts',
+      counters: { events: 0, exports: 0, scans: 0 },
+      tts: { engine: null, audioBlob: null, audioUrl: null, module: null },
+      asr: { pipeline: null, mediaRecorder: null, mediaStream: null, audioChunks: [], audioBlob: null, hf: null, isRecording: false, currentAudioUrl: null },
+      capsuleTimer: null,
+      qr: {
+        lastPayload: '',
+        svgMarkup: '',
+        cameraStream: null,
+        cameraActive: false,
+        scanLoop: null,
+        lastScanText: '',
+      },
+      b64: {
+        files: [],           // FileList items staged for encoding
+        fileFmt: 'uri',      // 'raw' | 'uri'
+        charset: 'std',      // 'std' | 'url'
+        wrap: true,
+        encodedResults: [],  // { name, mime, size, b64 }[]
+      }
+    };
+
+    function updateStats() {
+      els.statMode.textContent = state.mode.toUpperCase();
+      els.statEvents.textContent = String(state.counters.events);
+      els.statExports.textContent = String(state.counters.exports);
+      els.statScans.textContent = String(state.counters.scans);
+    }
+
+    function bump(counter) {
+      if (state.counters[counter] != null) state.counters[counter]++;
+      updateStats();
+    }
+
+    function log(message, type='accent') {
+      const div = document.createElement('div');
+      div.className = type;
+      div.textContent = '[' + new Date().toLocaleTimeString() + '] ' + message;
+      els.logBox.prepend(div);
+      console.log(message);
+      bump('events');
+    }
+
+    function setStatus(text){ els.topStatus.textContent = text; }
+    function setEngineState(text){ els.engineState.textContent = text; }
+    function setProgress(value){
+      const n = Math.max(0, Math.min(100, Math.round(value)));
+      els.progressBar.style.width = n + '%';
+      els.progressText.textContent = n + '%';
+    }
+    function setRecorderUI(active, label='IDLE'){
+      els.liveDot.classList.toggle('active', active);
+      els.liveLabel.textContent = label;
+    }
+
+    function safeRevoke(url){
+      try { if (url) URL.revokeObjectURL(url); } catch {}
+    }
+
+    function environmentCheck() {
+      log('Environment check starting...', 'accent');
+      log('Protocol: ' + location.protocol, 'warn');
+      log('Host: ' + location.hostname, 'warn');
+      log('Secure Context: ' + window.isSecureContext, window.isSecureContext ? 'ok' : 'err');
+      log('WebGPU: ' + ('gpu' in navigator), ('gpu' in navigator) ? 'ok' : 'warn');
+      log('MediaDevices: ' + ('mediaDevices' in navigator), ('mediaDevices' in navigator) ? 'ok' : 'err');
+      log('AudioContext: ' + (!!(window.AudioContext || window.webkitAudioContext)), (window.AudioContext || window.webkitAudioContext) ? 'ok' : 'err');
+      if (location.protocol === 'file:') {
+        log('Running from file:// — browser AI features may be partially blocked. localhost is recommended.', 'warn');
+        els.runtimeNotes.textContent = 'Running from file://. Use localhost for best AI compatibility.';
+      }
+    }
+
+    const modeMeta = {
+      tts: ['Voice Synthesis Console', 'Browser-local Kokoro speech synthesis'],
+      transcribe: ['Offline Transcription Console', 'Local browser inference with Whisper'],
+      steg: ['Steganography Console', 'Zero-width hidden message operations'],
+      capsule: ['Time Capsule Forge', 'Create delayed-release standalone HTML capsules'],
+      qr: ['QR Command Suite V2', 'Generate, style, export, scan, and decode QR payloads'],
+      b64: ['Base64 Vault', 'Encode & decode text and files of any type — fully offline'],
+      a85: ['Ascii85 Vault', 'Encode & decode Ascii85 (Base85) text payloads'],
+    };
+
+    function switchMode(mode){
+      state.mode = mode;
+      els.modeBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.mode === mode));
+      els.modePanels.forEach(panel => panel.classList.toggle('hidden', panel.id !== 'mode-' + mode));
+      els.mainTitle.textContent = modeMeta[mode][0];
+      els.mainTag.textContent = modeMeta[mode][1];
+      els.runtimeNotes.textContent = 'Mode switched to ' + mode.toUpperCase() + '.';
+      setStatus('STANDBY');
+      setEngineState('READY');
+      setProgress(0);
+      setRecorderUI(false, 'IDLE');
+      updateStats();
+      log('Mode switched to ' + mode.toUpperCase() + '.', 'accent');
+    }
+    els.modeBtns.forEach(btn => btn.addEventListener('click', () => switchMode(btn.dataset.mode)));
+
+    // ----------------------------
+    // TTS
+    // ----------------------------
+    async function loadKokoroModule(){
+      if (state.tts.module) return state.tts.module;
+      log('Loading kokoro-js module...', 'accent');
+      const mod = await import('https://esm.sh/kokoro-js');
+      state.tts.module = mod;
+      log('kokoro-js exports: ' + Object.keys(mod).join(', '), 'warn');
+      return mod;
+    }
+
+    async function initTTS(){
+      try {
+        setStatus('INITIALIZING');
+        setEngineState('BOOTSTRAPPING');
+        setProgress(5);
+        els.runtimeNotes.textContent = 'Loading Kokoro.js runtime and model...';
+
+        const mod = await loadKokoroModule();
+        const KokoroTTS = mod.KokoroTTS || mod.default?.KokoroTTS || mod.default;
+        if (!KokoroTTS) throw new Error('KokoroTTS export not found in kokoro-js module.');
+
+        const dtype = $('dtypeSelect').value;
+
+        state.tts.engine = await KokoroTTS.from_pretrained('onnx-community/Kokoro-82M-ONNX', {
+          dtype,
+          device: 'wasm',
+          progress_callback: (p) => {
+            if (p && typeof p.progress === 'number') setProgress(p.progress * 100);
+          }
+        });
+
+        setProgress(100);
+        setStatus('READY');
+        setEngineState('READY');
+        els.runtimeNotes.textContent = 'Kokoro engine initialized and cached.';
+        log('Kokoro engine initialized successfully.', 'ok');
+      } catch(err) {
+        console.error(err);
+        setStatus('FAULT');
+        setEngineState('ERROR');
+        setProgress(0);
+        log('TTS initialization failure: ' + (err?.message || err), 'err');
+      }
+    }
+
+    async function pcmToWavBlob(float32Array, sampleRate = 24000) {
+      const numChannels = 1, bytesPerSample = 2, blockAlign = numChannels * bytesPerSample, byteRate = sampleRate * blockAlign, dataSize = float32Array.length * bytesPerSample;
+      const buffer = new ArrayBuffer(44 + dataSize); const view = new DataView(buffer);
+      function writeString(offset, str) { for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i)); }
+      writeString(0, 'RIFF'); view.setUint32(4, 36 + dataSize, true); writeString(8, 'WAVE'); writeString(12, 'fmt '); view.setUint32(16, 16, true); view.setUint16(20, 1, true); view.setUint16(22, numChannels, true); view.setUint32(24, sampleRate, true); view.setUint32(28, byteRate, true); view.setUint16(32, blockAlign, true); view.setUint16(34, 16, true); writeString(36, 'data'); view.setUint32(40, dataSize, true);
+      let offset = 44;
+      for (let i = 0; i < float32Array.length; i++) {
+        const s = Math.max(-1, Math.min(1, float32Array[i]));
+        view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+        offset += 2;
+      }
+      return new Blob([buffer], { type: 'audio/wav' });
+    }
+
+    async function generateSpeech(){
+      try {
+        const text = $('ttsInput').value.trim();
+        const voice = $('voiceSelect').value;
+        if (!text) return log('No text supplied.', 'warn');
+        if (!state.tts.engine) await initTTS();
+        if (!state.tts.engine) return;
+
+        setStatus('SYNTHESIZING');
+        setEngineState('PROCESSING');
+        setProgress(10);
+        log('Generating speech with voice ' + voice + '...', 'accent');
+
+        const result = await state.tts.engine.generate(text, { voice });
+        let audio = null, sampleRate = 24000;
+
+        if (result?.audio instanceof Float32Array) {
+          audio = result.audio;
+          sampleRate = result.sample_rate || sampleRate;
+        } else if (result instanceof Float32Array) {
+          audio = result;
+        } else if (result?.data instanceof Float32Array) {
+          audio = result.data;
+          sampleRate = result.sample_rate || sampleRate;
+        } else {
+          throw new Error('Unexpected Kokoro output shape.');
+        }
+
+        state.tts.audioBlob = await pcmToWavBlob(audio, sampleRate);
+        safeRevoke(state.tts.audioUrl);
+        state.tts.audioUrl = URL.createObjectURL(state.tts.audioBlob);
+        const audioEl = $('ttsAudio');
+        audioEl.src = state.tts.audioUrl;
+        audioEl.load();
+
+        setProgress(100);
+        setStatus('AUDIO READY');
+        setEngineState('READY');
+        log('Speech generated successfully.', 'ok');
+      } catch(err) {
+        console.error(err);
+        setStatus('FAULT');
+        setEngineState('ERROR');
+        setProgress(0);
+        log('Speech generation failure: ' + (err?.message || err), 'err');
+      }
+    }
+
+    // ----------------------------
+    // ASR
+    // ----------------------------
+    async function loadTransformers() {
+      if (state.asr.hf) return state.asr.hf;
+      try {
+        log('Loading Transformers.js runtime...', 'accent');
+        state.asr.hf = await import('https://cdn.jsdelivr.net/npm/@xenova/transformers');
+        log('Transformers.js loaded successfully.', 'ok');
+        return state.asr.hf;
+      } catch (err) {
+        console.error(err);
+        log('Transformers.js import failed: ' + (err?.message || err), 'err');
+        throw err;
+      }
+    }
+
+    async function initASR(){
+      try {
+        setStatus('INITIALIZING');
+        setEngineState('LOADING');
+        setProgress(5);
+        const hf = await loadTransformers();
+        const model = $('asrModel').value;
+        let device = $('asrDevice').value;
+
+        if (device === 'webgpu' && !('gpu' in navigator)) {
+          device = 'wasm';
+          $('asrDevice').value = 'wasm';
+          log('WebGPU unavailable. Falling back to WASM.', 'warn');
+        }
+
+        log('Initializing ASR model: ' + model + ' on ' + device, 'accent');
+        state.asr.pipeline = await hf.pipeline('automatic-speech-recognition', model, {
+          device,
+          progress_callback: (p) => {
+            if (p && typeof p.progress === 'number') setProgress(p.progress * 100);
+          }
+        });
+
+        setProgress(100);
+        setStatus('READY');
+        setEngineState('READY');
+        log('ASR model initialized successfully.', 'ok');
+      } catch(err) {
+        console.error(err);
+        setStatus('FAULT');
+        setEngineState('ERROR');
+        setProgress(0);
+        log('ASR initialization failure: ' + (err?.message || err), 'err');
+      }
+    }
+
+    async function startRecording(){
+      try {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          log('Microphone capture is not supported in this browser or file context.', 'err');
+          setStatus('MIC UNSUPPORTED');
+          setEngineState('ERROR');
+          return;
+        }
+
+        if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.protocol !== 'file:') {
+          log('Microphone access usually requires HTTPS or localhost.', 'warn');
+        }
+
+        const permissionApiSupported = !!navigator.permissions?.query;
+        if (permissionApiSupported) {
+          try {
+            const permission = await navigator.permissions.query({ name: 'microphone' });
+            log('Microphone permission state: ' + permission.state, permission.state === 'granted' ? 'ok' : 'warn');
+            if (permission.state === 'denied') {
+              setRecorderUI(false, 'MIC DENIED');
+              setStatus('MIC DENIED');
+              setEngineState('WAITING');
+              els.runtimeNotes.textContent = 'Microphone permission is denied in the browser. Enable mic access in site settings or use audio upload instead.';
+              log('Microphone permission is already denied. Recorder will not prompt again until browser site permissions are changed.', 'err');
+              return;
+            }
+          } catch (permErr) {
+            log('Microphone permission preflight unavailable: ' + (permErr?.message || permErr), 'warn');
+          }
+        }
+
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true
+          }
+        });
+
+        state.asr.mediaStream = stream;
+        state.asr.audioChunks = [];
+
+        let mimeType = '';
+        if (window.MediaRecorder?.isTypeSupported?.('audio/webm;codecs=opus')) {
+          mimeType = 'audio/webm;codecs=opus';
+        } else if (window.MediaRecorder?.isTypeSupported?.('audio/webm')) {
+          mimeType = 'audio/webm';
+        } else if (window.MediaRecorder?.isTypeSupported?.('audio/ogg;codecs=opus')) {
+          mimeType = 'audio/ogg;codecs=opus';
+        }
+
+        state.asr.mediaRecorder = mimeType
+          ? new MediaRecorder(stream, { mimeType })
+          : new MediaRecorder(stream);
+
+        log('Recorder MIME type: ' + (mimeType || 'browser default'), 'warn');
+
+        state.asr.mediaRecorder.ondataavailable = (e)=>{ if (e.data?.size > 0) state.asr.audioChunks.push(e.data); };
+        state.asr.mediaRecorder.onstop = ()=>{
+          const blobType = state.asr.mediaRecorder.mimeType || mimeType || 'audio/webm';
+          state.asr.audioBlob = new Blob(state.asr.audioChunks, { type: blobType });
+          safeRevoke(state.asr.currentAudioUrl);
+          state.asr.currentAudioUrl = URL.createObjectURL(state.asr.audioBlob);
+          const player = $('asrAudio');
+          player.src = state.asr.currentAudioUrl;
+          player.load();
+          if (state.asr.mediaStream) state.asr.mediaStream.getTracks().forEach(t=>t.stop());
+          log('Audio capture complete.', 'ok');
+        };
+
+        state.asr.mediaRecorder.start();
+        state.asr.isRecording = true;
+        setRecorderUI(true, 'RECORDING');
+        setStatus('RECORDING');
+        setEngineState('CAPTURING');
+        els.runtimeNotes.textContent = 'Recording live. Speak clearly, then stop and transcribe.';
+        log('Recording started.', 'ok');
+      } catch(err){
+        console.error(err);
+        state.asr.isRecording = false;
+        setRecorderUI(false, 'MIC BLOCKED');
+        setStatus('MIC BLOCKED');
+        setEngineState('WAITING');
+
+        if (state.asr.mediaStream) {
+          try { state.asr.mediaStream.getTracks().forEach(t=>t.stop()); } catch {}
+          state.asr.mediaStream = null;
+        }
+
+        if (err?.name === 'NotAllowedError' || /permission denied/i.test(err?.message || '')) {
+          log('Microphone permission was denied. Use HTTPS or localhost, then allow mic access when prompted.', 'err');
+          log('Fallback path available: upload an audio file and transcribe that instead.', 'warn');
+          els.runtimeNotes.textContent = 'Mic access denied. Use the audio upload field or re-enable microphone permission in your browser.';
+        } else if (err?.name === 'NotFoundError') {
+          log('No microphone device was found on this system.', 'err');
+          els.runtimeNotes.textContent = 'No microphone detected. Connect one and try again.';
+        } else if (err?.name === 'NotReadableError') {
+          log('Microphone is busy or unavailable because another app may be using it.', 'err');
+          els.runtimeNotes.textContent = 'Microphone is busy. Close other apps using it and try again.';
+        } else {
+          log('Recording failure: ' + (err?.message || err), 'err');
+          els.runtimeNotes.textContent = 'Recorder failed to start.';
+        }
+      }
+    }
+
+    function stopRecording(){
+      if (state.asr.mediaRecorder && state.asr.isRecording) {
+        state.asr.mediaRecorder.stop();
+        state.asr.isRecording = false;
+        setRecorderUI(false, 'RECORDER IDLE');
+        setStatus('READY');
+        log('Recording stopped.', 'warn');
+      }
+    }
+
+    function mixToMono(audioBuffer) {
+      const length = audioBuffer.length, out = new Float32Array(length), channels = audioBuffer.numberOfChannels;
+      for (let c = 0; c < channels; c++) {
+        const data = audioBuffer.getChannelData(c);
+        for (let i = 0; i < length; i++) out[i] += data[i] / channels;
+      }
+      return out;
+    }
+
+    async function blobToAudioArray(blob) {
+      try {
+        log('Decoding audio blob: ' + (blob.type || 'unknown type'), 'accent');
+        const arrayBuffer = await blob.arrayBuffer();
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
+        const decoded = await audioContext.decodeAudioData(arrayBuffer.slice(0));
+        log(`Decoded audio: ${decoded.numberOfChannels} channel(s), ${decoded.sampleRate}Hz, ${decoded.duration.toFixed(2)}s`, 'ok');
+        return decoded.numberOfChannels > 1 ? mixToMono(decoded) : decoded.getChannelData(0);
+      } catch (err) {
+        console.error(err);
+        log('Audio decode failed: ' + (err?.message || err), 'err');
+        throw err;
+      }
+    }
+
+    async function transcribeAudio(){
+      try {
+        if (!state.asr.audioBlob) return log('No recorded audio available.', 'warn');
+        if (!state.asr.pipeline) await initASR();
+        if (!state.asr.pipeline) return;
+
+        setStatus('TRANSCRIBING');
+        setEngineState('PROCESSING');
+        setProgress(10);
+        const audio = await blobToAudioArray(state.asr.audioBlob);
+        const result = await state.asr.pipeline(audio, { chunk_length_s:20, stride_length_s:5, return_timestamps:false });
+        $('asrOutput').value = (typeof result === 'string' ? result : (result?.text || '')).trim();
+        setProgress(100);
+        setStatus('READY');
+        setEngineState('READY');
+        log('Transcription completed successfully.', 'ok');
+      } catch(err){
+        console.error(err);
+        setStatus('FAULT');
+        setEngineState('ERROR');
+        setProgress(0);
+        log('Transcription failure: ' + (err?.message || err), 'err');
+      }
+    }
+
+    // ----------------------------
+    // STEG
+    // ----------------------------
+    const ZERO = '​', ONE = '‌';
+
+    function textToBinary(text){
+      return [...new TextEncoder().encode(text)].map(b => b.toString(2).padStart(8, '0')).join('');
+    }
+
+    function binaryToText(binary){
+      if (!binary) return '';
+      const bytes = [];
+      for (let i = 0; i < binary.length; i += 8) bytes.push(parseInt(binary.substring(i, i + 8), 2));
+      return new TextDecoder().decode(new Uint8Array(bytes));
+    }
+
+    function encodeMessage(){
+      const publicMsg = $('publicMessage').value;
+      const secretMsg = $('secretMessage').value;
+      if (!secretMsg) return $('encodeResult').value = publicMsg;
+      const binary = textToBinary(secretMsg);
+      const hiddenStr = [...binary].map(bit => bit === '0' ? ZERO : ONE).join('');
+      $('encodeResult').value = publicMsg.length > 0 ? publicMsg.charAt(0) + hiddenStr + publicMsg.slice(1) : hiddenStr;
+      log('Secret embedded with zero-width encoding.', 'ok');
+    }
+
+    function decodeMessage(){
+      const inputMsg = $('hiddenInput').value;
+      let binary = '';
+      for (const char of inputMsg) {
+        if (char === ZERO) binary += '0';
+        else if (char === ONE) binary += '1';
+      }
+      const remainder = binary.length % 8;
+      if (remainder !== 0) binary = binary.slice(0, binary.length - remainder);
+      $('decodeResult').value = binary.length > 0 ? binaryToText(binary) : 'No hidden message found in this text.';
+      log('Decode operation completed.', 'ok');
+    }
+
+    // ----------------------------
+    // CAPSULE
+    // ----------------------------
+    function setDefaultUnlock(){
+      const future = new Date(Date.now() + 24*60*60*1000);
+      const local = new Date(future.getTime() - future.getTimezoneOffset()*60000).toISOString().slice(0,16);
+      $('unlockTime').value = local;
+    }
+
+    function formatCountdown(ms){
+      if (ms <= 0) return '00d 00h 00m 00s';
+      const total = Math.floor(ms / 1000);
+      const d = Math.floor(total / 86400);
+      const h = Math.floor((total % 86400) / 3600);
+      const m = Math.floor((total % 3600) / 60);
+      const s = total % 60;
+      return `${String(d).padStart(2,'0')}d ${String(h).padStart(2,'0')}h ${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}s`;
+    }
+
+    function renderCapsulePreview(){
+      const title = $('capsuleTitle').value.trim() || 'Untitled Capsule';
+      const message = $('capsuleMessage').value.trim();
+      const unlock = $('unlockTime').value;
+      const preview = $('capsulePreview');
+
+      if (!unlock) {
+        preview.innerHTML = '<div class="capsule-title">Awaiting Capsule Data</div><div class="locked-card">Set an unlock time to preview the capsule.</div>';
+        return;
+      }
+
+      const unlockDate = new Date(unlock);
+      const locked = Date.now() < unlockDate.getTime();
+
+      preview.innerHTML = locked
+        ? `<div class="capsule-title">${title}</div><div class="locked-card"><strong>Capsule Locked</strong><div class="small" style="margin-top:8px;">Unlocks at ${unlockDate.toLocaleString()}</div><div class="countdown" id="capsuleCountdown">${formatCountdown(unlockDate.getTime() - Date.now())}</div></div>`
+        : `<div class="capsule-title">${title}</div><div class="unlocked-card"><strong>Capsule Unlocked</strong><div class="revealed-message">${message.replace(/[<>&]/g, s => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[s]))}</div></div>`;
+
+      clearInterval(state.capsuleTimer);
+      if (locked) {
+        state.capsuleTimer = setInterval(() => {
+          const el = $('capsuleCountdown');
+          if (!el) return clearInterval(state.capsuleTimer);
+          const remaining = unlockDate.getTime() - Date.now();
+          el.textContent = formatCountdown(remaining);
+          if (remaining <= 0) {
+            clearInterval(state.capsuleTimer);
+            renderCapsulePreview();
+          }
+        }, 1000);
+      }
+      log('Capsule preview rendered.', 'ok');
+    }
+
+    function saveCapsule(){
+      const title = $('capsuleTitle').value.trim() || 'TeamLegacy Capsule';
+      const message = $('capsuleMessage').value;
+      const unlock = $('unlockTime').value;
+      if (!unlock || !message.trim()) return log('Capsule requires both message and unlock time.', 'warn');
+
+      const safeTitle = title.replace(/[<>&]/g, '').trim() || 'TeamLegacy Capsule';
+      const payload = { title: safeTitle, message, unlock };
+      const payloadJSON = JSON.stringify(payload).replace(/<\//g, '<\\/');
+
+      const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${safeTitle}</title>
+  <style>
+    body{margin:0;font-family:Arial,sans-serif;background:#05070a;color:#d8ecff;display:grid;place-items:center;min-height:100vh;padding:24px;background:linear-gradient(180deg,#030508,#081019)}
+    .card{max-width:860px;width:100%;background:#0d141d;border:1px solid rgba(115,215,255,.14);border-radius:20px;padding:28px;box-shadow:0 0 0 1px rgba(115,215,255,.08),0 10px 40px rgba(0,0,0,.45)}
+    h1{margin:0 0 8px;color:#73d7ff;text-transform:uppercase;letter-spacing:.08em}
+    .muted{color:#8ea8bf}
+    .count{font-size:1.5rem;font-weight:800;color:#8cff9b;margin:14px 0}
+    .msg{white-space:pre-wrap;line-height:1.6;margin-top:16px}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>${safeTitle}</h1>
+    <div class="muted">TeamLegacy Time Capsule</div>
+    <div id="view"></div>
+  </div>
+  <script>
+    const payload = ${payloadJSON};
+    function esc(s){
+      return s.replace(/[<>&]/g, function(m){
+        return ({'<':'&lt;','>':'&gt;','&':'&amp;'})[m];
+      });
+    }
+    function fmt(ms){
+      if(ms<=0) return '00d 00h 00m 00s';
+      const t=Math.floor(ms/1000),d=Math.floor(t/86400),h=Math.floor((t%86400)/3600),m=Math.floor((t%3600)/60),s=t%60;
+      return String(d).padStart(2,'0')+'d '+String(h).padStart(2,'0')+'h '+String(m).padStart(2,'0')+'m '+String(s).padStart(2,'0')+'s';
+    }
+    const view=document.getElementById('view');
+    function render(){
+      const unlockDate=new Date(payload.unlock);
+      const locked=Date.now()<unlockDate.getTime();
+      view.innerHTML = locked
+        ? '<div class="muted">Unlocks at '+unlockDate.toLocaleString()+'</div><div class="count" id="count">'+fmt(unlockDate.getTime()-Date.now())+'</div>'
+        : '<div class="muted">Unlocked</div><div class="msg">'+esc(payload.message)+'</div>';
+      if(locked){
+        const id=setInterval(function(){
+          const el=document.getElementById('count');
+          if(!el) return clearInterval(id);
+          const rem=unlockDate.getTime()-Date.now();
+          el.textContent=fmt(rem);
+          if(rem<=0){
+            clearInterval(id);
+            render();
+          }
+        },1000);
+      }
+    }
+    render();
+  <\/script>
+</body>
+</html>`;
+
+      const blob = new Blob([html], { type:'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = (safeTitle.replace(/[^a-z0-9-_]+/gi,'_') || 'teamlegacy_capsule') + '.html';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url), 1000);
+      bump('exports');
+      log('Time capsule exported as standalone HTML.', 'ok');
+    }
+
+    // ----------------------------
+    // QR SUITE V2
+    // ----------------------------
+    function escQR(value='') {
+      return String(value).replace(/([\\;,:"])/g, '\\$1');
+    }
+
+    function updateQRFieldVisibility() {
+      const type = $('qrType').value;
+
+      const basic = $('qr-basic-fields');
+      const secondaryWrap = $('qrSecondaryWrap');
+      const wifi = $('qr-wifi-fields');
+      const vcard = $('qr-vcard-fields');
+
+      basic.classList.remove('hidden');
+      secondaryWrap.classList.add('hidden');
+      wifi.classList.add('hidden');
+      vcard.classList.add('hidden');
+
+      const primary = $('qrPrimary');
+      const secondary = $('qrSecondary');
+
+      if (type === 'url') {
+        primary.placeholder = 'https://teamlegacy.us';
+      } else if (type === 'text') {
+        primary.placeholder = 'Enter any text to encode...';
+      } else if (type === 'email') {
+        primary.placeholder = 'example@email.com';
+      } else if (type === 'phone') {
+        primary.placeholder = '4175551234';
+      } else if (type === 'sms') {
+        primary.placeholder = 'Enter SMS message here...';
+        secondaryWrap.classList.remove('hidden');
+        secondary.placeholder = 'Phone number for SMS';
+      } else if (type === 'wifi') {
+        basic.classList.add('hidden');
+        wifi.classList.remove('hidden');
+      } else if (type === 'vcard') {
+        basic.classList.add('hidden');
+        vcard.classList.remove('hidden');
+      }
+    }
+
+    function buildQRPayload() {
+      const type = $('qrType').value;
+      const primary = $('qrPrimary').value.trim();
+      const secondary = $('qrSecondary').value.trim();
+
+      let payload = '';
+
+      if (type === 'url') {
+        payload = primary;
+      } else if (type === 'text') {
+        payload = primary;
+      } else if (type === 'email') {
+        payload = `mailto:${primary}`;
+      } else if (type === 'phone') {
+        payload = `tel:${primary}`;
+      } else if (type === 'sms') {
+        payload = `SMSTO:${secondary}:${primary}`;
+      } else if (type === 'wifi') {
+        const ssid = $('wifiSSID').value.trim();
+        const password = $('wifiPassword').value.trim();
+        const encryption = $('wifiEncryption').value;
+        const hidden = $('wifiHidden').value;
+        payload = `WIFI:T:${escQR(encryption)};S:${escQR(ssid)};P:${escQR(password)};H:${hidden};`;
+      } else if (type === 'vcard') {
+        const first = $('vcardFirst').value.trim();
+        const last = $('vcardLast').value.trim();
+        const phone = $('vcardPhone').value.trim();
+        const email = $('vcardEmail').value.trim();
+        const org = $('vcardOrg').value.trim();
+        const title = $('vcardTitle').value.trim();
+        const url = $('vcardUrl').value.trim();
+
+        payload =
+`BEGIN:VCARD
+VERSION:3.0
+N:${escQR(last)};${escQR(first)}
+FN:${escQR((first + ' ' + last).trim())}
+ORG:${escQR(org)}
+TITLE:${escQR(title)}
+TEL:${escQR(phone)}
+EMAIL:${escQR(email)}
+URL:${escQR(url)}
+END:VCARD`;
+      }
+
+      $('qrPayload').value = payload;
+      state.qr.lastPayload = payload;
+      return payload;
+    }
+
+    function drawCenterLabel(ctx, canvas, label) {
+      if (!label) return;
+      const safeLabel = label.trim().slice(0, 18);
+      if (!safeLabel) return;
+
+      const size = canvas.width;
+      const boxW = size * 0.34;
+      const boxH = size * 0.16;
+      const x = (size - boxW) / 2;
+      const y = (size - boxH) / 2;
+
+      ctx.save();
+      ctx.fillStyle = '#ffffff';
+      ctx.strokeStyle = 'rgba(0,0,0,.12)';
+      ctx.lineWidth = Math.max(2, size * 0.005);
+      roundRect(ctx, x, y, boxW, boxH, Math.max(12, size * 0.03));
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#000000';
+      ctx.font = `bold ${Math.max(16, size * 0.05)}px Arial, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(safeLabel, size / 2, size / 2);
+      ctx.restore();
+    }
+
+    function roundRect(ctx, x, y, width, height, radius) {
+      const r = Math.min(radius, width / 2, height / 2);
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + width, y, x + width, y + height, r);
+      ctx.arcTo(x + width, y + height, x, y + height, r);
+      ctx.arcTo(x, y + height, x, y, r);
+      ctx.arcTo(x, y, x + width, y, r);
+      ctx.closePath();
+    }
+
+    async function generateQR() {
+      try {
+        const payload = buildQRPayload();
+        if (!payload.trim()) {
+          log('QR payload is empty.', 'warn');
+          return;
+        }
+
+        const canvas = $('qrCanvas');
+        const size = Number($('qrSize').value) || 384;
+        const fg = $('qrFg').value || '#000000';
+        const bg = $('qrBg').value || '#ffffff';
+        const label = $('qrLabel').value.trim();
+        const errorCorrectionLevel = $('qrErrorCorrection').value || 'M';
+
+        canvas.width = size;
+        canvas.height = size;
+
+        setStatus('GENERATING');
+        setEngineState('QR ACTIVE');
+        setProgress(20);
+
+        await QRCode.toCanvas(canvas, payload, {
+          width: size,
+          margin: 2,
+          color: {
+            dark: fg,
+            light: bg
+          },
+          errorCorrectionLevel
+        });
+
+        if (label) {
+          const ctx = canvas.getContext('2d');
+          drawCenterLabel(ctx, canvas, label);
+        }
+
+        state.qr.svgMarkup = await QRCode.toString(payload, {
+          type: 'svg',
+          width: size,
+          margin: 2,
+          color: {
+            dark: fg,
+            light: bg
+          },
+          errorCorrectionLevel
+        });
+
+        setProgress(100);
+        setStatus('QR READY');
+        setEngineState('READY');
+        els.runtimeNotes.textContent = 'QR code generated locally and ready for export.';
+        log('QR code generated successfully.', 'ok');
+      } catch (err) {
+        console.error(err);
+        setStatus('FAULT');
+        setEngineState('ERROR');
+        setProgress(0);
+        log('QR generation failure: ' + (err?.message || err), 'err');
+      }
+    }
+
+    function downloadQR() {
+      const canvas = $('qrCanvas');
+      const payload = $('qrPayload').value.trim();
+      if (!payload) return log('No QR code available to download.', 'warn');
+
+      const a = document.createElement('a');
+      a.href = canvas.toDataURL('image/png');
+      a.download = 'teamlegacy-qr-code.png';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      bump('exports');
+      log('QR code exported as PNG.', 'ok');
+    }
+
+    function downloadQRSVG() {
+      const payload = $('qrPayload').value.trim();
+      if (!payload || !state.qr.svgMarkup) return log('No SVG QR available to download.', 'warn');
+
+      const blob = new Blob([state.qr.svgMarkup], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'teamlegacy-qr-code.svg';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      bump('exports');
+      log('QR code exported as SVG.', 'ok');
+    }
+
+    function printQRCard() {
+      const payload = $('qrPayload').value.trim();
+      if (!payload) return log('Generate a QR first before printing a mission card.', 'warn');
+
+      const png = $('qrCanvas').toDataURL('image/png');
+      const title = $('qrType').selectedOptions[0]?.textContent || 'QR Payload';
+      const label = $('qrLabel').value.trim() || 'TEAMLEGACY';
+      const escapedPayload = payload.replace(/[<>&]/g, s => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[s]));
+
+      const win = window.open('', '_blank', 'width=900,height=700');
+      if (!win) return log('Popup blocked. Allow popups to print the QR card.', 'err');
+
+      win.document.write(`
+<!DOCTYPE html>
+<html>
+<head>
+  <title>TeamLegacy QR Mission Card</title>
+  <style>
+    body{font-family:Arial,sans-serif;background:#0a1016;color:#d8ecff;padding:30px;margin:0}
+    .card{max-width:850px;margin:0 auto;background:#0d141d;border:1px solid rgba(115,215,255,.18);border-radius:24px;padding:28px}
+    h1{margin:0 0 10px;color:#73d7ff;letter-spacing:.1em;text-transform:uppercase}
+    .sub{color:#8ea8bf;margin-bottom:22px}
+    .grid{display:grid;grid-template-columns:340px 1fr;gap:24px;align-items:start}
+    img{width:100%;height:auto;background:#fff;border-radius:18px;padding:16px;box-sizing:border-box}
+    .payload{white-space:pre-wrap;word-break:break-word;line-height:1.6;background:#081019;border-radius:16px;padding:16px;color:#d8ecff}
+    .tag{display:inline-block;padding:8px 12px;border-radius:999px;background:#081019;border:1px solid rgba(115,215,255,.14);color:#8ea8bf;font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
+    @media print{
+      body{background:#fff;color:#000}
+      .card{border:1px solid #ccc;background:#fff;color:#000}
+      .sub,.tag{color:#333}
+      .payload{background:#f4f4f4;color:#111}
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>TeamLegacy QR Mission Card</h1>
+    <div class="sub">${label}</div>
+    <div class="grid">
+      <div><img src="${png}" alt="QR Code" /></div>
+      <div>
+        <div class="tag">${title}</div>
+        <div class="payload">${escapedPayload}</div>
+      </div>
+    </div>
+  </div>
+  <script>
+    window.onload = () => setTimeout(() => window.print(), 250);
+  <\/script>
+</body>
+</html>
+      `);
+      win.document.close();
+      bump('exports');
+      log('Print-ready QR mission card prepared.', 'ok');
+    }
+
+    function clearQR() {
+      $('qrPrimary').value = '';
+      $('qrSecondary').value = '';
+      $('wifiSSID').value = '';
+      $('wifiPassword').value = '';
+      $('wifiEncryption').value = 'WPA';
+      $('wifiHidden').value = 'false';
+      $('vcardFirst').value = '';
+      $('vcardLast').value = '';
+      $('vcardPhone').value = '';
+      $('vcardEmail').value = '';
+      $('vcardOrg').value = '';
+      $('vcardTitle').value = '';
+      $('vcardUrl').value = '';
+      $('qrPayload').value = '';
+      $('qrLabel').value = '';
+      $('qrFg').value = '#000000';
+      $('qrBg').value = '#ffffff';
+      $('qrErrorCorrection').value = 'M';
+
+      const canvas = $('qrCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      state.qr.lastPayload = '';
+      state.qr.svgMarkup = '';
+      log('QR generator fields cleared.', 'warn');
+    }
+
+    // ----------------------------
+    // QR SCANNING
+    // ----------------------------
+    function setScanResult(text, type='ok') {
+      $('qrScanResult').textContent = text || 'Awaiting QR scan input...';
+      if (type === 'err') $('qrScanResult').style.color = 'var(--red)';
+      else if (type === 'warn') $('qrScanResult').style.color = 'var(--amber)';
+      else $('qrScanResult').style.color = 'var(--cyan)';
+    }
+
+    function drawVideoFrameToCanvas() {
+      const video = $('qrVideo');
+      const canvas = $('scanCanvas');
+      const ctx = canvas.getContext('2d');
+
+      if (!video.videoWidth || !video.videoHeight) return null;
+
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      return ctx.getImageData(0, 0, canvas.width, canvas.height);
+    }
+
+    function tryDecodeImageData(imageData) {
+      if (!imageData) return null;
+      try {
+        return jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'attemptBoth' });
+      } catch (err) {
+        console.error(err);
+        return null;
+      }
+    }
+
+    function markScanBox(code) {
+      const canvas = $('scanCanvas');
+      const ctx = canvas.getContext('2d');
+      if (!code?.location) return;
+
+      ctx.save();
+      ctx.lineWidth = 5;
+      ctx.strokeStyle = '#00ff88';
+      ctx.beginPath();
+      ctx.moveTo(code.location.topLeftCorner.x, code.location.topLeftCorner.y);
+      ctx.lineTo(code.location.topRightCorner.x, code.location.topRightCorner.y);
+      ctx.lineTo(code.location.bottomRightCorner.x, code.location.bottomRightCorner.y);
+      ctx.lineTo(code.location.bottomLeftCorner.x, code.location.bottomLeftCorner.y);
+      ctx.closePath();
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function handleDecodedQR(text, source='scanner') {
+      if (!text) return;
+      state.qr.lastScanText = text;
+      setScanResult(text, 'ok');
+      bump('scans');
+      log(`QR decoded from ${source}.`, 'ok');
+    }
+
+    async function startQRScanner() {
+      try {
+        if (!navigator.mediaDevices?.getUserMedia) {
+          log('Camera API not supported in this browser.', 'err');
+          setScanResult('Camera API not supported in this browser.', 'err');
+          return;
+        }
+
+        stopQRScanner();
+
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: 'environment'
+          },
+          audio: false
+        });
+
+        state.qr.cameraStream = stream;
+        state.qr.cameraActive = true;
+
+        const video = $('qrVideo');
+        video.srcObject = stream;
+        video.classList.remove('hidden');
+        await video.play();
+
+        setStatus('SCANNING');
+        setEngineState('QR SCANNER');
+        els.runtimeNotes.textContent = 'Live QR scan active. Point the camera at a QR code.';
+        log('QR webcam scanner started.', 'ok');
+
+        const loop = () => {
+          if (!state.qr.cameraActive) return;
+          const imageData = drawVideoFrameToCanvas();
+          const code = tryDecodeImageData(imageData);
+          if (code?.data) {
+            markScanBox(code);
+            handleDecodedQR(code.data, 'webcam');
+          }
+          state.qr.scanLoop = requestAnimationFrame(loop);
+        };
+        loop();
+
+      } catch (err) {
+        console.error(err);
+        log('Unable to start webcam scanner: ' + (err?.message || err), 'err');
+        setScanResult('Unable to start webcam scanner. Camera permission may be blocked.', 'err');
+      }
+    }
+
+    function stopQRScanner() {
+      state.qr.cameraActive = false;
+      if (state.qr.scanLoop) cancelAnimationFrame(state.qr.scanLoop);
+      state.qr.scanLoop = null;
+
+      if (state.qr.cameraStream) {
+        state.qr.cameraStream.getTracks().forEach(track => track.stop());
+        state.qr.cameraStream = null;
+      }
+
+      const video = $('qrVideo');
+      video.pause();
+      video.srcObject = null;
+      video.classList.add('hidden');
+
+      const canvas = $('scanCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      setStatus('READY');
+      setEngineState('READY');
+      log('QR webcam scanner stopped.', 'warn');
+    }
+
+    async function decodeUploadedQRImage(file) {
+      try {
+        if (!file) return;
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+
+        img.onload = () => {
+          try {
+            const canvas = $('scanCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+            ctx.drawImage(img, 0, 0);
+
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const code = tryDecodeImageData(imageData);
+
+            if (code?.data) {
+              markScanBox(code);
+              handleDecodedQR(code.data, 'image upload');
+            } else {
+              setScanResult('No QR code detected in uploaded image.', 'warn');
+              log('No QR code detected in uploaded image.', 'warn');
+            }
+          } finally {
+            URL.revokeObjectURL(url);
+          }
+        };
+
+        img.onerror = () => {
+          URL.revokeObjectURL(url);
+          setScanResult('Image load failed. Try another QR image.', 'err');
+          log('Uploaded QR image failed to load.', 'err');
+        };
+
+        img.src = url;
+      } catch (err) {
+        console.error(err);
+        setScanResult('QR image decode failed.', 'err');
+        log('QR image decode failure: ' + (err?.message || err), 'err');
+      }
+    }
+
+    function useScanAsInput() {
+      const text = state.qr.lastScanText?.trim();
+      if (!text) return log('No decoded scan result available to reuse.', 'warn');
+
+      $('qrType').value = 'text';
+      updateQRFieldVisibility();
+      $('qrPrimary').value = text;
+      $('qrPayload').value = text;
+      switchMode('qr');
+      log('Decoded scan loaded into QR generator input.', 'ok');
+    }
+
+    // ============================================================
+    // BASE64 VAULT
+    // ============================================================
+
+    // Expose tab switcher globally (called via onclick)
+    window.b64SwitchTab = function(tab) {
+      ['encode','decode'].forEach(t => {
+        $('b64Tab' + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle('active', t === tab);
+        $('b64Panel' + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle('active', t === tab);
+      });
+      log('Base64 Vault — switched to ' + tab.toUpperCase() + ' tab.', 'accent');
+    };
+
+    // ---- Charset & wrap settings ----
+    window.b64SetCharset = function(cs) {
+      state.b64.charset = cs;
+      $('b64CharStd').classList.toggle('on', cs === 'std');
+      $('b64CharUrl').classList.toggle('on', cs === 'url');
+      log('Base64 charset: ' + (cs === 'url' ? 'URL-safe' : 'Standard'), 'accent');
+    };
+
+    window.b64SetWrap = function(wrap) {
+      state.b64.wrap = wrap;
+      $('b64WrapOn').classList.toggle('on', wrap === true);
+      $('b64WrapOff').classList.toggle('on', wrap === false);
+    };
+
+    window.b64SetFileFmt = function(fmt) {
+      state.b64.fileFmt = fmt;
+      $('b64FmtRaw').classList.toggle('on', fmt === 'raw');
+      $('b64FmtUri').classList.toggle('on', fmt === 'uri');
+      log('Base64 file output format: ' + fmt.toUpperCase(), 'accent');
+    };
+
+    // ---- Core encode helpers ----
+    function arrayBufferToBase64(buffer, urlSafe=false) {
+      const bytes = new Uint8Array(buffer);
+      let binary = '';
+      for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
+      let b64 = btoa(binary);
+      if (urlSafe) b64 = b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+      return b64;
+    }
+
+    function wrapBase64(b64, width=76) {
+      if (!state.b64.wrap) return b64;
+      const chunks = [];
+      for (let i = 0; i < b64.length; i += width) chunks.push(b64.slice(i, i + width));
+      return chunks.join('\n');
+    }
+
+    function formatBytes(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / 1048576).toFixed(2) + ' MB';
+    }
+
+    function renderB64Stats(containerId, originalBytes, b64Length) {
+      const container = $(containerId);
+      if (!container) return;
+      const ratio = originalBytes > 0 ? ((b64Length / originalBytes) * 100).toFixed(1) : '—';
+      container.innerHTML = `
+        <span class="b64-stat">Input <strong>${formatBytes(originalBytes)}</strong></span>
+        <span class="b64-stat">Output <strong>${formatBytes(b64Length)}</strong></span>
+        <span class="b64-stat">Ratio <strong>${ratio}%</strong></span>
+        <span class="b64-stat">Chars <strong>${b64Length.toLocaleString()}</strong></span>
+      `;
+    }
+
+    // ---- Text encode ----
+    window.b64EncodeText = function() {
+      try {
+        const text = $('b64TextIn').value;
+        if (!text) return log('Base64 Vault: No text to encode.', 'warn');
+        const encoder = new TextEncoder();
+        const bytes = encoder.encode(text);
+        const urlSafe = state.b64.charset === 'url';
+        const raw = arrayBufferToBase64(bytes.buffer, urlSafe);
+        const wrapped = wrapBase64(raw);
+        $('b64TextOut').textContent = wrapped;
+        renderB64Stats('b64TextStats', bytes.byteLength, raw.length);
+        setEngineState('ENCODED');
+        log(`Base64 Vault: Text encoded — ${bytes.byteLength} bytes → ${raw.length} chars.`, 'ok');
+      } catch(err) {
+        log('Base64 encode text failure: ' + (err?.message || err), 'err');
+      }
+    };
+
+    // ---- File handling ----
+    window.b64HandleFiles = function(fileList) {
+      state.b64.files = [...(fileList || [])];
+      renderStagedFiles();
+      log(`Base64 Vault: ${state.b64.files.length} file(s) staged for encoding.`, 'ok');
+    };
+
+    function renderStagedFiles() {
+      const cards = $('b64FileCards');
+      cards.innerHTML = '';
+      if (!state.b64.files.length) return;
+      state.b64.files.forEach((file, idx) => {
+        const card = document.createElement('div');
+        card.className = 'b64-file-card';
+        card.id = 'b64Card_' + idx;
+        card.innerHTML = `
+          <div class="b64-file-card-header">
+            <div>
+              <div class="b64-file-name">${escHtml(file.name)}</div>
+              <div class="b64-file-meta">${escHtml(file.type || 'application/octet-stream')} &nbsp;·&nbsp; ${formatBytes(file.size)}</div>
+            </div>
+            <div class="b64-file-actions">
+              <button class="btn-primary" style="padding:8px 12px;font-size:.75rem;" onclick="b64EncodeSingleFile(${idx})">Encode</button>
+              <button class="btn-danger" style="padding:8px 12px;font-size:.75rem;" onclick="b64RemoveFile(${idx})">✕</button>
+            </div>
+          </div>
+          <div class="b64-output-box" id="b64FileOut_${idx}" style="min-height:54px;">Click Encode to process this file…</div>
+          <div class="b64-stats-bar" style="margin-top:8px;" id="b64FileStats_${idx}"></div>
+          <div class="btn-row" style="margin-top:10px;" id="b64FileActions_${idx}"></div>
+        `;
+        cards.appendChild(card);
+      });
+    }
+
+    window.b64RemoveFile = function(idx) {
+      state.b64.files.splice(idx, 1);
+      renderStagedFiles();
+      log('Base64 Vault: File removed from queue.', 'warn');
+    };
+
+    window.b64EncodeSingleFile = function(idx) {
+      const file = state.b64.files[idx];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const urlSafe = state.b64.charset === 'url';
+          const raw = arrayBufferToBase64(e.target.result, urlSafe);
+          const mime = file.type || 'application/octet-stream';
+          const output = state.b64.fileFmt === 'uri'
+            ? `data:${mime};base64,${raw}`
+            : wrapBase64(raw);
+
+          const outEl = $('b64FileOut_' + idx);
+          if (outEl) outEl.textContent = output;
+
+          renderB64Stats('b64FileStats_' + idx, file.size, raw.length);
+
+          // Build action buttons
+          const actEl = $('b64FileActions_' + idx);
+          if (actEl) {
+            actEl.innerHTML = '';
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'btn-secondary';
+            copyBtn.style.cssText = 'padding:8px 12px;font-size:.75rem;';
+            copyBtn.textContent = 'Copy Output';
+            copyBtn.onclick = () => {
+              navigator.clipboard.writeText(output)
+                .then(() => log('Base64 Vault: Output copied to clipboard.', 'ok'))
+                .catch(err => log('Clipboard error: ' + err.message, 'err'));
+            };
+
+            const dlTxtBtn = document.createElement('button');
+            dlTxtBtn.className = 'btn-secondary';
+            dlTxtBtn.style.cssText = 'padding:8px 12px;font-size:.75rem;';
+            dlTxtBtn.textContent = 'Download .b64';
+            dlTxtBtn.onclick = () => {
+              const blob = new Blob([output], { type: 'text/plain;charset=utf-8' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = file.name + '.b64.txt';
+              document.body.appendChild(a);
+              a.click();
+              a.remove();
+              setTimeout(() => URL.revokeObjectURL(url), 1000);
+              bump('exports');
+              log('Base64 Vault: Encoded file downloaded.', 'ok');
+            };
+
+            actEl.appendChild(copyBtn);
+            actEl.appendChild(dlTxtBtn);
+          }
+
+          bump('exports');
+          log(`Base64 Vault: "${file.name}" encoded — ${formatBytes(file.size)} → ${raw.length.toLocaleString()} chars.`, 'ok');
+        } catch(err) {
+          log('Base64 file encode failure: ' + (err?.message || err), 'err');
+        }
+      };
+      reader.onerror = () => log('FileReader error for: ' + file.name, 'err');
+      reader.readAsArrayBuffer(file);
+    };
+
+    window.b64EncodeSelectedFiles = function() {
+      if (!state.b64.files.length) return log('Base64 Vault: No files staged.', 'warn');
+      state.b64.files.forEach((_, idx) => b64EncodeSingleFile(idx));
+    };
+
+    window.b64DownloadAllAsZipTxt = function() {
+      // Collect all visible encoded outputs and bundle into one text file
+      const lines = [];
+      state.b64.files.forEach((file, idx) => {
+        const el = $('b64FileOut_' + idx);
+        if (el && el.textContent && !el.textContent.startsWith('Click Encode')) {
+          lines.push(`### FILE: ${file.name} ###`);
+          lines.push(el.textContent);
+          lines.push('');
+        }
+      });
+      if (!lines.length) return log('Base64 Vault: No encoded outputs to bundle.', 'warn');
+      const combined = lines.join('\n');
+      const blob = new Blob([combined], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'teamlegacy-base64-bundle.txt';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      bump('exports');
+      log('Base64 Vault: All encoded outputs bundled and downloaded.', 'ok');
+    };
+
+    window.b64ClearFiles = function() {
+      state.b64.files = [];
+      $('b64FileInput').value = '';
+      $('b64FileCards').innerHTML = '';
+      log('Base64 Vault: File queue cleared.', 'warn');
+    };
+
+    window.b64ClearText = function() {
+      $('b64TextIn').value = '';
+      $('b64TextOut').textContent = 'Base64 output will appear here…';
+      $('b64TextStats').innerHTML = '';
+      log('Base64 Vault: Text encode fields cleared.', 'warn');
+    };
+
+    // ---- Decode ----
+    function stripDataURI(input) {
+      const trimmed = input.trim();
+      const match = trimmed.match(/^data:([^;]+);base64,(.+)$/s);
+      if (match) {
+        return { mime: match[1].trim(), raw: match[2].replace(/\s/g, '') };
+      }
+      return { mime: null, raw: trimmed.replace(/\s/g, '') };
+    }
+
+    function base64ToArrayBuffer(b64) {
+      const standard = b64.replace(/-/g, '+').replace(/_/g, '/');
+      const padded = standard + '=='.slice(0, (4 - standard.length % 4) % 4);
+      const binary = atob(padded);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      return bytes.buffer;
+    }
+
+    window.b64DecodeToText = function() {
+      try {
+        const raw_input = $('b64DecodeIn').value;
+        if (!raw_input.trim()) return log('Base64 Vault: No input to decode.', 'warn');
+        const { raw } = stripDataURI(raw_input);
+        const buffer = base64ToArrayBuffer(raw);
+        const text = new TextDecoder('utf-8').decode(buffer);
+        $('b64DecodeOut').textContent = text;
+        renderB64Stats('b64DecodeStats', buffer.byteLength, raw.length);
+        $('b64DecodePreviewContainer').classList.add('hidden');
+        $('b64DecodePreviewContainer').innerHTML = '';
+        log(`Base64 Vault: Decoded to text — ${raw.length} chars → ${buffer.byteLength} bytes.`, 'ok');
+      } catch(err) {
+        $('b64DecodeOut').textContent = 'Decode error: ' + (err?.message || err);
+        log('Base64 decode failure: ' + (err?.message || err), 'err');
+      }
+    };
+
+    window.b64DecodeToFile = function() {
+      try {
+        const raw_input = $('b64DecodeIn').value;
+        if (!raw_input.trim()) return log('Base64 Vault: No input to decode.', 'warn');
+        const { mime: detectedMime, raw } = stripDataURI(raw_input);
+        const mimeSelect = $('b64DecodeMime').value;
+        const mime = mimeSelect === 'auto' ? (detectedMime || 'application/octet-stream') : mimeSelect;
+
+        const buffer = base64ToArrayBuffer(raw);
+        const blob = new Blob([buffer], { type: mime });
+        const url = URL.createObjectURL(blob);
+
+        let filename = $('b64DecodeFilename').value.trim();
+        if (!filename) {
+          const ext = mime.split('/')[1]?.split('+')[0] || 'bin';
+          filename = 'decoded-output.' + ext;
+        }
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        bump('exports');
+        renderB64Stats('b64DecodeStats', buffer.byteLength, raw.length);
+        log(`Base64 Vault: Decoded and downloaded as "${filename}" (${formatBytes(buffer.byteLength)}).`, 'ok');
+      } catch(err) {
+        log('Base64 decode-to-file failure: ' + (err?.message || err), 'err');
+      }
+    };
+
+    window.b64DecodePreview = function() {
+      try {
+        const raw_input = $('b64DecodeIn').value;
+        if (!raw_input.trim()) return log('Base64 Vault: No input to preview.', 'warn');
+        const { mime: detectedMime, raw } = stripDataURI(raw_input);
+        const mimeSelect = $('b64DecodeMime').value;
+        const mime = mimeSelect === 'auto' ? (detectedMime || '') : mimeSelect;
+
+        const dataUri = `data:${mime || 'application/octet-stream'};base64,${raw}`;
+        const container = $('b64DecodePreviewContainer');
+        container.innerHTML = '';
+        container.classList.remove('hidden');
+
+        if (mime.startsWith('image/')) {
+          const img = document.createElement('img');
+          img.src = dataUri;
+          img.alt = 'Base64 decoded image preview';
+          img.style.maxHeight = '400px';
+          img.style.objectFit = 'contain';
+          container.appendChild(img);
+          log('Base64 Vault: Image preview rendered.', 'ok');
+        } else if (mime.startsWith('audio/')) {
+          const audio = document.createElement('audio');
+          audio.src = dataUri;
+          audio.controls = true;
+          container.appendChild(audio);
+          log('Base64 Vault: Audio preview rendered.', 'ok');
+        } else if (mime.startsWith('video/')) {
+          const video = document.createElement('video');
+          video.src = dataUri;
+          video.controls = true;
+          video.style.maxHeight = '360px';
+          container.appendChild(video);
+          log('Base64 Vault: Video preview rendered.', 'ok');
+        } else if (mime === 'text/html') {
+          const iframe = document.createElement('iframe');
+          iframe.src = dataUri;
+          iframe.style.cssText = 'width:100%;height:300px;border:none;border-radius:0;background:#fff;';
+          container.appendChild(iframe);
+          log('Base64 Vault: HTML preview rendered in iframe.', 'ok');
+        } else if (mime === 'image/svg+xml') {
+          const img = document.createElement('img');
+          img.src = dataUri;
+          container.appendChild(img);
+          log('Base64 Vault: SVG preview rendered.', 'ok');
+        } else {
+          container.classList.add('hidden');
+          log('Base64 Vault: No preview available for this MIME type. Use Decode → Download File instead.', 'warn');
+          $('b64DecodeOut').textContent = 'Preview not available for this file type. Use "Decode → Download File" to save it.';
+        }
+      } catch(err) {
+        log('Base64 preview failure: ' + (err?.message || err), 'err');
+      }
+    };
+
+    window.b64ClearDecode = function() {
+      $('b64DecodeIn').value = '';
+      $('b64DecodeOut').textContent = 'Decoded text output will appear here…';
+      $('b64DecodeStats').innerHTML = '';
+      $('b64DecodePreviewContainer').classList.add('hidden');
+      $('b64DecodePreviewContainer').innerHTML = '';
+      $('b64DecodeFilename').value = '';
+      log('Base64 Vault: Decode fields cleared.', 'warn');
+    };
+
+    // ---- Copy helper ----
+    window.b64CopyOutput = function(id) {
+      const el = $(id);
+      if (!el) return;
+      const text = el.textContent || el.value || '';
+      if (!text.trim()) return log('Base64 Vault: Nothing to copy.', 'warn');
+      navigator.clipboard.writeText(text)
+        .then(() => log('Base64 Vault: Output copied to clipboard.', 'ok'))
+        .catch(err => log('Clipboard error: ' + err.message, 'err'));
+    };
+
+    // ---- Download text helper ----
+    window.b64DownloadText = function(id, filename) {
+      const el = $(id);
+      const text = el?.textContent || el?.value || '';
+      if (!text.trim()) return log('Base64 Vault: Nothing to download.', 'warn');
+      const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename || 'encoded.b64.txt';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      bump('exports');
+      log('Base64 Vault: Text file downloaded.', 'ok');
+    };
+
+    // ---- Roundtrip ----
+    window.b64Roundtrip = function() {
+      try {
+        const input = $('b64RtInput').value;
+        if (!input) return log('Base64 Vault: Enter a test string first.', 'warn');
+        const encoded = btoa(new TextEncoder().encode(input).reduce((s, b) => s + String.fromCharCode(b), ''));
+        const decoded = new TextDecoder().decode(base64ToArrayBuffer(encoded));
+        const match = decoded === input;
+        $('b64RtOutput').textContent = [
+          `Original:  ${input}`,
+          `Encoded:   ${encoded}`,
+          `Decoded:   ${decoded}`,
+          `Integrity: ${match ? '✓ PASS — roundtrip successful' : '✗ FAIL — mismatch detected'}`
+        ].join('\n');
+        $('b64RtOutput').style.color = match ? 'var(--green)' : 'var(--red)';
+        log('Base64 Vault: Roundtrip test ' + (match ? 'passed.' : 'FAILED!'), match ? 'ok' : 'err');
+      } catch(err) {
+        log('Base64 roundtrip error: ' + (err?.message || err), 'err');
+      }
+    };
+
+    // ---- Drag & drop ----
+    const dropZone = $('b64DropZone');
+    if (dropZone) {
+      dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+      dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+      dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+        const files = e.dataTransfer?.files;
+        if (files?.length) {
+          state.b64.files = [...files];
+          renderStagedFiles();
+          log(`Base64 Vault: ${files.length} file(s) dropped into queue.`, 'ok');
+        }
+      });
+    }
+
+    // ---- Utility ----
+    function escHtml(str) {
+      return String(str).replace(/[<>&"']/g, s => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[s]));
+    }
+
+    // ============================================================
+    // ASCII85 VAULT LOGIC
+    // ============================================================
+    const Ascii85 = {
+      encode: function(str) {
+        const data = new TextEncoder().encode(str);
+        let res = '<~';
+        let i = 0;
+        for (; i + 3 < data.length; i += 4) {
+          let num = ((data[i] << 24) | (data[i+1] << 16) | (data[i+2] << 8) | data[i+3]) >>> 0;
+          if (num === 0) {
+            res += 'z';
+          } else {
+            let block = [];
+            for (let j = 0; j < 5; j++) {
+              block.unshift(String.fromCharCode((num % 85) + 33));
+              num = Math.floor(num / 85);
+            }
+            res += block.join('');
+          }
+        }
+        if (i < data.length) {
+          let padding = 4 - (data.length - i);
+          let num = 0;
+          for (let j = 0; j < 4; j++) {
+            num = (num << 8) | (i + j < data.length ? data[i+j] : 0);
+          }
+          num >>>= 0;
+          let block = [];
+          for (let j = 0; j < 5; j++) {
+            block.unshift(String.fromCharCode((num % 85) + 33));
+            num = Math.floor(num / 85);
+          }
+          res += block.slice(0, 5 - padding).join('');
+        }
+        return res + '~>';
+      },
+      decode: function(str) {
+        let clean = str.replace(/\s/g, '').replace(/^<~/, '').replace(/~>$/, '');
+        let result = [];
+        let i = 0;
+        while (i < clean.length) {
+          if (clean[i] === 'z') {
+            result.push(0, 0, 0, 0);
+            i++;
+            continue;
+          }
+          let block = clean.slice(i, i + 5);
+          if (block.length < 5) {
+            let padding = 5 - block.length;
+            block += 'u'.repeat(padding);
+            let num = 0;
+            for (let j = 0; j < 5; j++) {
+              let charCode = block.charCodeAt(j) - 33;
+              if (charCode < 0 || charCode > 84) throw new Error("Invalid Ascii85 character sequence detected.");
+              num = num * 85 + charCode;
+            }
+            for (let j = 0; j < 4 - padding; j++) {
+               result.push((num >>> (24 - j * 8)) & 0xFF);
+            }
+            break;
+          } else {
+            let num = 0;
+            for (let j = 0; j < 5; j++) {
+              let charCode = block.charCodeAt(j) - 33;
+              if (charCode < 0 || charCode > 84) throw new Error("Invalid Ascii85 character sequence detected.");
+              num = num * 85 + charCode;
+            }
+            result.push((num >>> 24) & 0xFF, (num >>> 16) & 0xFF, (num >>> 8) & 0xFF, num & 0xFF);
+            i += 5;
+          }
+        }
+        return new TextDecoder().decode(new Uint8Array(result));
+      }
+    };
+
+    // ----------------------------
+    // Helpers
+    // ----------------------------
+    function copyText(id){
+      const value = $(id).value || $(id).textContent;
+      if (!value.trim()) return log('Nothing to copy.', 'warn');
+      navigator.clipboard.writeText(value)
+        .then(()=>log('Copied to clipboard.', 'ok'))
+        .catch(err=>log('Clipboard failure: ' + (err?.message || err), 'err'));
+    }
+
+    function copyRawText(text){
+      if (!String(text || '').trim()) return log('Nothing to copy.', 'warn');
+      navigator.clipboard.writeText(text)
+        .then(()=>log('Copied to clipboard.', 'ok'))
+        .catch(err=>log('Clipboard failure: ' + (err?.message || err), 'err'));
+    }
+
+    function downloadText(id, filename){
+      const text = $(id).value || $(id).textContent;
+      if (!text.trim()) return log('No text available for export.', 'warn');
+      const blob = new Blob([text], { type:'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url), 1000);
+      bump('exports');
+      log('Text exported.', 'ok');
+    }
+
+    function runSelfTests(){
+      try {
+        console.assert(textToBinary('A') === '01000001', 'textToBinary failed for A');
+        console.assert(binaryToText('01000001') === 'A', 'binaryToText failed for A');
+        console.assert(formatCountdown(1000) === '00d 00h 00m 01s', 'Countdown formatting failed');
+        console.assert(formatCountdown(0) === '00d 00h 00m 00s', 'Countdown zero formatting failed');
+        console.assert(formatCountdown(86400000 + 3600000 + 60000 + 1000) === '01d 01h 01m 01s', 'Countdown mixed formatting failed');
+
+        const publicMsg = 'HELLO';
+        const secret = 'SECRET';
+        $('publicMessage').value = publicMsg;
+        $('secretMessage').value = secret;
+        encodeMessage();
+        $('hiddenInput').value = $('encodeResult').value;
+        decodeMessage();
+        console.assert($('decodeResult').value === secret, 'Steg encode/decode roundtrip failed');
+
+        $('secretMessage').value = '';
+        encodeMessage();
+        console.assert($('encodeResult').value === publicMsg, 'Steg empty secret passthrough failed');
+
+        const binary = textToBinary('TeamLegacy');
+        console.assert(binaryToText(binary) === 'TeamLegacy', 'Binary roundtrip failed');
+
+        // Base64 self-test
+        const testStr = 'TeamLegacy Base64 Test 🔐';
+        const enc = new TextEncoder().encode(testStr);
+        const b64 = arrayBufferToBase64(enc.buffer);
+        const decoded = new TextDecoder().decode(base64ToArrayBuffer(b64));
+        console.assert(decoded === testStr, 'Base64 roundtrip failed');
+
+        // Ascii85 self-test
+        const a85TestStr = 'TeamLegacy Ascii85 Offline Tool Engine ✓';
+        const a85Enc = Ascii85.encode(a85TestStr);
+        const a85Dec = Ascii85.decode(a85Enc);
+        console.assert(a85Dec === a85TestStr, 'Ascii85 roundtrip failed');
+
+        log('Self-tests passed.', 'ok');
+      } catch (err) {
+        console.error(err);
+        log('Self-tests failed: ' + (err?.message || err), 'err');
+      }
+    }
+
+    // ----------------------------
+    // Events
+    // ----------------------------
+    $('ttsInit').addEventListener('click', initTTS);
+    $('ttsSpeak').addEventListener('click', generateSpeech);
+    $('ttsPlay').addEventListener('click', ()=> $('ttsAudio').play().catch(err=>log('Playback blocked: ' + (err?.message || err), 'err')));
+    $('ttsStop').addEventListener('click', ()=>{ const a = $('ttsAudio'); a.pause(); a.currentTime = 0; log('Playback stopped.', 'warn'); });
+    $('ttsDownload').addEventListener('click', ()=>{
+      if (!state.tts.audioBlob) return log('No WAV available for download.', 'warn');
+      const a = document.createElement('a');
+      const url = URL.createObjectURL(state.tts.audioBlob);
+      a.href = url;
+      a.download = 'teamlegacy-kokoro-output.wav';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url), 1000);
+      bump('exports');
+      log('WAV exported.', 'ok');
+    });
+
+    $('asrInit').addEventListener('click', initASR);
+    $('asrRecord').addEventListener('click', startRecording);
+    $('asrStop').addEventListener('click', stopRecording);
+    $('asrTranscribe').addEventListener('click', transcribeAudio);
+    $('asrCopy').addEventListener('click', ()=>copyText('asrOutput'));
+    $('asrDownload').addEventListener('click', ()=>downloadText('asrOutput', 'teamlegacy-offline-transcript.txt'));
+    $('asrClear').addEventListener('click', ()=>{
+      $('asrOutput').value = '';
+      $('asrAudio').removeAttribute('src');
+      $('asrAudio').load();
+      $('asrFile').value = '';
+      state.asr.audioBlob = null;
+      state.asr.audioChunks = [];
+      safeRevoke(state.asr.currentAudioUrl);
+      state.asr.currentAudioUrl = null;
+      setProgress(0);
+      log('Transcript and audio buffers cleared.', 'warn');
+    });
+
+    $('asrFile').addEventListener('change', async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      state.asr.audioBlob = file;
+      safeRevoke(state.asr.currentAudioUrl);
+      state.asr.currentAudioUrl = URL.createObjectURL(file);
+      const player = $('asrAudio');
+      player.src = state.asr.currentAudioUrl;
+      player.load();
+      setStatus('AUDIO LOADED');
+      setEngineState('READY');
+      log('Audio file loaded for transcription: ' + file.name, 'ok');
+    });
+
+    $('stegEncode').addEventListener('click', encodeMessage);
+    $('stegDecode').addEventListener('click', decodeMessage);
+    $('stegCopy').addEventListener('click', ()=>copyText('encodeResult'));
+    $('stegClear').addEventListener('click', ()=>['publicMessage','secretMessage','encodeResult','hiddenInput','decodeResult'].forEach(id => $(id).value = ''));
+
+    $('capsulePreviewBtn').addEventListener('click', renderCapsulePreview);
+    $('capsuleSave').addEventListener('click', saveCapsule);
+
+    $('qrType').addEventListener('change', updateQRFieldVisibility);
+    $('qrGenerate').addEventListener('click', generateQR);
+    $('qrDownload').addEventListener('click', downloadQR);
+    $('qrDownloadSVG').addEventListener('click', downloadQRSVG);
+    $('qrPrintCard').addEventListener('click', printQRCard);
+    $('qrCopyData').addEventListener('click', ()=>copyText('qrPayload'));
+    $('qrClear').addEventListener('click', clearQR);
+
+    $('qrStartCam').addEventListener('click', startQRScanner);
+    $('qrStopCam').addEventListener('click', stopQRScanner);
+    $('qrImageUpload').addEventListener('change', (e) => decodeUploadedQRImage(e.target.files?.[0]));
+    $('qrCopyScan').addEventListener('click', ()=>copyRawText(state.qr.lastScanText));
+    $('qrUseScan').addEventListener('click', useScanAsInput);
+
+    $('btnA85Encode').addEventListener('click', () => {
+      try {
+        const input = $('a85EncodeIn').value;
+        if (!input) return log('Ascii85 Vault: No input to encode.', 'warn');
+        const encoded = Ascii85.encode(input);
+        $('a85EncodeOut').value = encoded;
+        bump('events');
+        log('Ascii85 Vault: Text encoded successfully.', 'ok');
+      } catch (err) {
+        log('Ascii85 encode failure: ' + (err?.message || err), 'err');
+      }
+    });
+
+    $('btnA85Decode').addEventListener('click', () => {
+      try {
+        const input = $('a85DecodeIn').value;
+        if (!input) return log('Ascii85 Vault: No input to decode.', 'warn');
+        const decoded = Ascii85.decode(input);
+        $('a85DecodeOut').value = decoded;
+        bump('events');
+        log('Ascii85 Vault: Text decoded successfully.', 'ok');
+      } catch (err) {
+        log('Ascii85 decode failure: ' + (err?.message || err), 'err');
+      }
+    });
+
+    window.addEventListener('beforeunload', () => {
+      stopQRScanner();
+      safeRevoke(state.tts.audioUrl);
+      safeRevoke(state.asr.currentAudioUrl);
+      clearInterval(state.capsuleTimer);
+    });
+
+    // ----------------------------
+    // Boot
+    // ----------------------------
+    setDefaultUnlock();
+    updateQRFieldVisibility();
+    clearQR();
+    updateStats();
+    environmentCheck();
+    runSelfTests();
+    log('TeamLegacy Omnitool V3 online.', 'ok');
+    log('Ascii85 Vault module active — no dependencies required.', 'ok');
+    log('Modules are loaded on demand for stability.', 'warn');
+  </script>
+</body>
+</html>
