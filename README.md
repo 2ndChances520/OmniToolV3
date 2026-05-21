@@ -114,7 +114,7 @@ This tool is provided "as is" without warranty of any kind. The authors are not 
 
 <div align="center">
 
-**CENTRAL INTELLIGENCE AGENCY**  
+**CENTRAL INTELLIGENCE AGEMCY**  
 **OFFICE OF COUNTER-INTELLIGENCE (OCI)**  
 **OPERATIONAL PROTOCOL: [REDACTED]**
 
@@ -180,7 +180,7 @@ Upon confirmation of Target contact with the Drop:
 <div align="center">
 
 **END OF TRANSMISSION**  
-*This document is property of the CIA. Unauthorized reproduction or possession will result in immediate detention and prosecution under the Espionage Act.*
+*This document is property of the 2ndChances520. Unauthorized reproduction or possession will result in immediate detention and prosecution under the Espionage Act.*
 
 `<< EOF_TRANSMISSION // 0x5A4B9 >>`
 
