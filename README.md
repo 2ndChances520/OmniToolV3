@@ -110,11 +110,7 @@ This tool is provided "as is" without warranty of any kind. The authors are not 
 `<< EOF_TRANSMISSION // 0x5A4B9 >>`
 
 </div>
-Since you are building a "Black Chamber" style ecosystem, this document should look like an official **Standard Operating Procedure (SUS)** found inside a classified digital folder. 
 
-I have used heavy redactions, bureaucratic terminology, and a cold, clinical tone.
-
-***
 
 <div align="center">
 
